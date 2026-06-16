@@ -4,8 +4,25 @@
   var links = document.querySelector('.nav-links');
 
   if (toggle && links) {
+    var setOpen = function (open) {
+      links.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+
+    setOpen(false);
+
     toggle.addEventListener('click', function () {
-      links.classList.toggle('open');
+      setOpen(!links.classList.contains('open'));
+    });
+
+    // Close the menu after tapping a link so navigation feels responsive.
+    links.addEventListener('click', function (e) {
+      if (e.target.closest('a')) setOpen(false);
+    });
+
+    // Close on Escape.
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
     });
   }
 
