@@ -587,6 +587,7 @@ a { color: inherit; text-decoration: none; }
 .bg-facebook  { background: #1877F2; }
 .bg-instagram { background: linear-gradient(135deg, #E1306C, #833AB4); }
 .bg-whatsapp  { background: #25D366; }
+.bg-x         { background: #000000; }
 .bg-neutral   { background: var(--purple-dark); }
 
 .tier {

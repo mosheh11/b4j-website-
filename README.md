@@ -26,14 +26,11 @@
 
 - **לוגו:** הוסיפו קובץ `logo.svg` בתיקייה הראשית. כל עוד אין קובץ, הלוגו פשוט לא יוצג (יש `onerror`).
 - **כתובת מייל:** ב-`join.html` — `info@example.org` (גם בקישור `mailto` וגם בטקסט).
-- **קישורי רשתות חברתיות** ב-`join.html`:
-  - פייסבוק: `https://facebook.com/PLACEHOLDER`
-  - אינסטגרם: `https://instagram.com/PLACEHOLDER`
-- **קבוצות וואטסאפ** ב-`join.html`: `PLACEHOLDER1`, `PLACEHOLDER2`, `PLACEHOLDER3`.
+- **קישורי רשתות חברתיות** ב-`join.html`: פייסבוק, אינסטגרם ו-X (טוויטר) — מעודכנים לקישורים האמיתיים.
+- **קבוצות וואטסאפ** ב-`join.html`: `PLACEHOLDER1`, `PLACEHOLDER2`, `PLACEHOLDER3` — עדיין דורשים החלפה.
 - **שמות ותפקידי הצוות** ב-`about.html` — שמות לדוגמה בלבד.
 - **שותפים** ב-`about.html` — שמות לדוגמה.
 - **אירועים** ב-`activities.html` — תאריכים, שעות ומיקומים לדוגמה.
-- **סכומי חברות** ב-`join.html` — בדקו שהמחירים נכונים.
 
 ## עיצוב
 
