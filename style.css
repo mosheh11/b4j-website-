@@ -544,7 +544,8 @@ a { color: inherit; text-decoration: none; }
 .social-card .brand-mark {
   position: absolute;
   bottom: -30px;
-  inset-inline-start: -22px;
+  inset-inline-start: auto;
+  inset-inline-end: -22px; /* RTL: end = left → glyph sits bottom-left, away from the text */
   width: 158px;
   height: 158px;
   opacity: 0.16;
@@ -555,7 +556,7 @@ a { color: inherit; text-decoration: none; }
 .social-card:hover .brand-mark { transform: rotate(-8deg) scale(1.08); }
 .social-card .brand-mark svg { width: 100%; height: 100%; fill: #fff; }
 
-/* Glass icon badge */
+/* Glass icon badge — pinned to the top-left, clear of the RTL text */
 .social-card .ic {
   width: 56px;
   height: 56px;
@@ -564,6 +565,7 @@ a { color: inherit; text-decoration: none; }
   place-items: center;
   background: rgba(255, 255, 255, 0.2);
   margin-bottom: 18px;
+  align-self: flex-end; /* RTL: flex-end of the cross axis = left edge */
 }
 .social-card .ic svg { width: 30px; height: 30px; fill: #fff; }
 
