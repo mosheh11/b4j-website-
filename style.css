@@ -176,7 +176,7 @@ a { color: inherit; text-decoration: none; }
   border-radius: 2px;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .nav-toggle { display: flex; }
   .nav-links {
     position: absolute;
@@ -590,7 +590,54 @@ a { color: inherit; text-decoration: none; }
 .bg-instagram { background: linear-gradient(135deg, #E1306C, #833AB4); }
 .bg-whatsapp  { background: #25D366; }
 .bg-x         { background: #000000; }
+.bg-donation  { background: linear-gradient(135deg, #6B2FA0, #8B4FC0); }
 .bg-neutral   { background: var(--purple-dark); }
+
+/* ---------- Unified social/link list ---------- */
+
+.link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.link-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 22px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.link-row:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+.lr-icon {
+  flex: 0 0 auto;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+}
+
+.lr-icon svg { width: 26px; height: 26px; fill: #fff; }
+
+.lr-text { flex: 1; min-width: 0; }
+.lr-text strong { display: block; font-size: 1.15rem; font-weight: 700; color: var(--text); }
+.lr-text span { font-size: 0.92rem; color: var(--muted); }
+
+.lr-arrow {
+  flex: 0 0 auto;
+  color: var(--purple);
+  font-size: 1.3rem;
+  font-weight: 700;
+  transition: transform 0.25s ease;
+}
+.link-row:hover .lr-arrow { transform: translateX(-6px); }
 
 .tier {
   text-align: center;
