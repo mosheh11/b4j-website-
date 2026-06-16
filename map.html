@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>מפת מסלולים | אופניים בשביל ירושלים</title>
-  <meta name="description" content="מפת מסלולי אופניים בירושלים — שכבת CycleMap ומפת גוגל.">
+  <title>שבילים בירושלים | אופניים בשביל ירושלים</title>
+  <meta name="description" content="מפת שבילי האופניים הרשמית של עיריית ירושלים.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
         <li><a href="index.html">בית</a></li>
         <li><a href="about.html">אודות</a></li>
         <li><a href="activities.html">פעילויות</a></li>
-        <li><a href="map.html">מפת מסלולים</a></li>
+        <li><a href="map.html">שבילים בירושלים</a></li>
         <li><a href="join.html">הצטרפות</a></li>
       </ul>
     </div>
@@ -31,34 +31,21 @@
 
   <header class="page-head">
     <div class="wrap">
-      <h1>מפת המסלולים</h1>
-      <p>שבילי אופניים ומסלולי רכיבה מומלצים בירושלים והסביבה.</p>
+      <h1>שבילים בירושלים</h1>
+      <p>מפת שבילי האופניים הרשמית של עיריית ירושלים.</p>
     </div>
   </header>
 
   <section class="section">
     <div class="wrap">
 
-      <!-- Map source tabs -->
-      <div class="map-tabs">
-        <button class="map-tab active" data-map="osm">OpenStreetMap (CycleMap)</button>
-        <button class="map-tab" data-map="google">Google Maps</button>
-      </div>
-
-      <!-- OSM map -->
-      <div class="map-frame" id="map-osm">
+      <!-- Official Jerusalem municipality bike-paths map (ArcGIS) -->
+      <div class="map-frame">
         <iframe
-          title="מפת אופניים — OpenStreetMap"
-          src="https://www.openstreetmap.org/export/embed.html?bbox=35.17%2C31.74%2C35.27%2C31.82&layer=cyclemap"
-          loading="lazy"></iframe>
-      </div>
-
-      <!-- Google map -->
-      <div class="map-frame" id="map-google" style="display:none;">
-        <iframe
-          title="מפת אופניים — Google Maps"
-          src="https://www.google.com/maps?q=Jerusalem&z=13&output=embed"
-          loading="lazy"></iframe>
+          title="שבילי אופניים — עיריית ירושלים"
+          src="https://jerusalemmuni.maps.arcgis.com/apps/webappviewer/index.html?id=fca8964e1f9c4070bcdcdb862ad368c9&amp;query=%D7%A9%D7%91%D7%99%D7%9C%D7%99%20%D7%90%D7%95%D7%A4%D7%A0%D7%99%D7%99%D7%9D"
+          loading="lazy"
+          allowfullscreen></iframe>
       </div>
 
       <!-- Legend -->
@@ -103,7 +90,7 @@
         <li><a href="index.html">בית</a></li>
         <li><a href="about.html">אודות</a></li>
         <li><a href="activities.html">פעילויות</a></li>
-        <li><a href="map.html">מפת מסלולים</a></li>
+        <li><a href="map.html">שבילים בירושלים</a></li>
         <li><a href="join.html">הצטרפות</a></li>
       </ul>
       <small>© 2026 אופניים בשביל ירושלים — עמותה רשומה</small>
@@ -111,20 +98,5 @@
   </footer>
 
   <script src="nav.js"></script>
-  <script>
-    // Map source tab switching
-    var tabs = document.querySelectorAll('.map-tab');
-    var osm = document.getElementById('map-osm');
-    var google = document.getElementById('map-google');
-    tabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        tabs.forEach(function (t) { t.classList.remove('active'); });
-        tab.classList.add('active');
-        var isOsm = tab.dataset.map === 'osm';
-        osm.style.display = isOsm ? '' : 'none';
-        google.style.display = isOsm ? 'none' : '';
-      });
-    });
-  </script>
 </body>
 </html>
