@@ -199,7 +199,7 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   background:
     linear-gradient(160deg, rgba(74, 31, 114, 0.92), rgba(107, 47, 160, 0.84)),
-    url('hero-bg.jpg') center / cover no-repeat;
+    url('hero-bg.jpg') center bottom / cover no-repeat;
   color: var(--white);
   padding: 96px 0 104px;
   text-align: center;
