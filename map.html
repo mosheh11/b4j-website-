@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מפת מסלולים | אופניים בשביל ירושלים</title>
+  <meta name="description" content="מפת מסלולי אופניים בירושלים — שכבת CycleMap ומפת גוגל.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html">
+        <img src="logo.svg" alt="לוגו" onerror="this.style.display='none'">
+        <span>אופניים בשביל ירושלים</span>
+      </a>
+      <button class="nav-toggle" aria-label="תפריט"><span></span><span></span><span></span></button>
+      <ul class="nav-links">
+        <li><a href="index.html">בית</a></li>
+        <li><a href="about.html">אודות</a></li>
+        <li><a href="activities.html">פעילויות</a></li>
+        <li><a href="map.html">מפת מסלולים</a></li>
+        <li><a href="join.html">הצטרפות</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-head">
+    <div class="wrap">
+      <h1>מפת המסלולים</h1>
+      <p>שבילי אופניים ומסלולי רכיבה מומלצים בירושלים והסביבה.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="wrap">
+
+      <!-- Map source tabs -->
+      <div class="map-tabs">
+        <button class="map-tab active" data-map="osm">OpenStreetMap (CycleMap)</button>
+        <button class="map-tab" data-map="google">Google Maps</button>
+      </div>
+
+      <!-- OSM map -->
+      <div class="map-frame" id="map-osm">
+        <iframe
+          title="מפת אופניים — OpenStreetMap"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=35.17%2C31.74%2C35.27%2C31.82&layer=cyclemap"
+          loading="lazy"></iframe>
+      </div>
+
+      <!-- Google map -->
+      <div class="map-frame" id="map-google" style="display:none;">
+        <iframe
+          title="מפת אופניים — Google Maps"
+          src="https://www.google.com/maps?q=Jerusalem&z=13&output=embed"
+          loading="lazy"></iframe>
+      </div>
+
+      <!-- Legend -->
+      <div class="section-head" style="margin: 56px auto 0;">
+        <span class="label">מקרא</span>
+        <h2>איך לקרוא את המפה</h2>
+      </div>
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-swatch" style="background:#6B2FA0;"></span>
+          <div><strong>שביל אופניים ייעודי</strong><span>נתיב מופרד מהכביש</span></div>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch" style="background:#8B4FC0;"></span>
+          <div><strong>נתיב משולב</strong><span>משותף עם הולכי רגל</span></div>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch" style="background:#4A1F72;"></span>
+          <div><strong>מסלול שטח</strong><span>סינגלים ודרכי עפר</span></div>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch" style="background:#E3F3E8; border:1px solid #E0D0F0;"></span>
+          <div><strong>מסלול קל</strong><span>מתאים למשפחות</span></div>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch" style="background:#FBF0DC; border:1px solid #E0D0F0;"></span>
+          <div><strong>מסלול בינוני</strong><span>דורש ניסיון בסיסי</span></div>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch" style="background:#F7E2E2; border:1px solid #E0D0F0;"></span>
+          <div><strong>מסלול מאתגר</strong><span>עליות ושטח טכני</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-logo">אופניים בשביל ירושלים</div>
+      <ul class="footer-links">
+        <li><a href="index.html">בית</a></li>
+        <li><a href="about.html">אודות</a></li>
+        <li><a href="activities.html">פעילויות</a></li>
+        <li><a href="map.html">מפת מסלולים</a></li>
+        <li><a href="join.html">הצטרפות</a></li>
+      </ul>
+      <small>© 2026 אופניים בשביל ירושלים — עמותה רשומה</small>
+    </div>
+  </footer>
+
+  <script src="nav.js"></script>
+  <script>
+    // Map source tab switching
+    var tabs = document.querySelectorAll('.map-tab');
+    var osm = document.getElementById('map-osm');
+    var google = document.getElementById('map-google');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabs.forEach(function (t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        var isOsm = tab.dataset.map === 'osm';
+        osm.style.display = isOsm ? '' : 'none';
+        google.style.display = isOsm ? 'none' : '';
+      });
+    });
+  </script>
+</body>
+</html>

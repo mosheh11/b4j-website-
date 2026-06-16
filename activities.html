@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>פעילויות | אופניים בשביל ירושלים</title>
+  <meta name="description" content="רכיבות, סדנאות ואירועים קרובים של עמותת אופניים בשביל ירושלים.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html">
+        <img src="logo.svg" alt="לוגו" onerror="this.style.display='none'">
+        <span>אופניים בשביל ירושלים</span>
+      </a>
+      <button class="nav-toggle" aria-label="תפריט"><span></span><span></span><span></span></button>
+      <ul class="nav-links">
+        <li><a href="index.html">בית</a></li>
+        <li><a href="about.html">אודות</a></li>
+        <li><a href="activities.html">פעילויות</a></li>
+        <li><a href="map.html">מפת מסלולים</a></li>
+        <li><a href="join.html">הצטרפות</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-head">
+    <div class="wrap">
+      <h1>פעילויות קרובות</h1>
+      <p>רכיבות, סדנאות ואירועים פתוחים לכולם. בחרו את מה שמתאים לכם והצטרפו.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="wrap">
+
+      <!-- Filters -->
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">הכל</button>
+        <button class="filter-btn" data-filter="ride">רכיבות</button>
+        <button class="filter-btn" data-filter="workshop">סדנאות</button>
+        <button class="filter-btn" data-filter="event">אירועים</button>
+      </div>
+
+      <!-- Events -->
+      <div class="grid" id="events">
+
+        <article class="card event" data-type="ride">
+          <div class="date-badge"><div class="day">21</div><div class="mon">יוני</div></div>
+          <div class="event-body">
+            <span class="type-tag">רכיבה</span>
+            <h3 style="margin-top:10px;">רכיבת בוקר בפארק המסילה</h3>
+            <p>רכיבה משפחתית רגועה לאורך פארק המסילה ועד תחנת הרכבת הישנה. מתאים גם לילדים.</p>
+            <div class="event-meta">
+              <span class="diff diff-easy">רמה: קלה</span>
+              <span>🕗 08:00</span>
+              <span>📍 כניסת פארק המסילה, בקעה</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card event" data-type="workshop">
+          <div class="date-badge"><div class="day">24</div><div class="mon">יוני</div></div>
+          <div class="event-body">
+            <span class="type-tag">סדנה</span>
+            <h3 style="margin-top:10px;">סדנת תיקון פנצ'ר בסיסית</h3>
+            <p>לומדים לאתר נקר, להחליף פנימית ולכוונן לחץ אוויר. הביאו את האופניים שלכם.</p>
+            <div class="event-meta">
+              <span class="diff diff-easy">רמה: קלה</span>
+              <span>🕔 17:30</span>
+              <span>📍 מרכז קהילתי, רחביה</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card event" data-type="ride">
+          <div class="date-badge"><div class="day">28</div><div class="mon">יוני</div></div>
+          <div class="event-body">
+            <span class="type-tag">רכיבה</span>
+            <h3 style="margin-top:10px;">מסלול אתגר ביער ירושלים</h3>
+            <p>רכיבת שטח טכנית בסינגלים של יער ירושלים, עם עליות מאתגרות ונופים מרהיבים.</p>
+            <div class="event-meta">
+              <span class="diff diff-hard">רמה: מאתגרת</span>
+              <span>🕕 06:30</span>
+              <span>📍 חניון עין חמד</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card event" data-type="event">
+          <div class="date-badge"><div class="day">04</div><div class="mon">יולי</div></div>
+          <div class="event-body">
+            <span class="type-tag">אירוע</span>
+            <h3 style="margin-top:10px;">יום האופניים העירוני</h3>
+            <p>יריד קהילתי עם עמדות מידע, מתקני בדיקה לאופניים, פעילות לילדים והרצאות.</p>
+            <div class="event-meta">
+              <span class="diff diff-easy">לכל המשפחה</span>
+              <span>🕙 10:00</span>
+              <span>📍 גן העצמאות</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card event" data-type="ride">
+          <div class="date-badge"><div class="day">11</div><div class="mon">יולי</div></div>
+          <div class="event-body">
+            <span class="type-tag">רכיבה</span>
+            <h3 style="margin-top:10px;">רכיבת ערב סביב חומות העיר העתיקה</h3>
+            <p>רכיבה עירונית בקצב בינוני בשעות הערב, עם עצירות לסיפורים על תולדות העיר.</p>
+            <div class="event-meta">
+              <span class="diff diff-medium">רמה: בינונית</span>
+              <span>🕖 19:00</span>
+              <span>📍 שער יפו</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card event" data-type="workshop">
+          <div class="date-badge"><div class="day">16</div><div class="mon">יולי</div></div>
+          <div class="event-body">
+            <span class="type-tag">סדנה</span>
+            <h3 style="margin-top:10px;">סדנת כוונון הילוכים ובלמים</h3>
+            <p>סדנה מתקדמת לתחזוקת מערכת ההילוכים והבלמים. מספר המקומות מוגבל.</p>
+            <div class="event-meta">
+              <span class="diff diff-medium">רמה: בינונית</span>
+              <span>🕔 17:00</span>
+              <span>📍 סדנת האופניים, תלפיות</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-logo">אופניים בשביל ירושלים</div>
+      <ul class="footer-links">
+        <li><a href="index.html">בית</a></li>
+        <li><a href="about.html">אודות</a></li>
+        <li><a href="activities.html">פעילויות</a></li>
+        <li><a href="map.html">מפת מסלולים</a></li>
+        <li><a href="join.html">הצטרפות</a></li>
+      </ul>
+      <small>© 2026 אופניים בשביל ירושלים — עמותה רשומה</small>
+    </div>
+  </footer>
+
+  <script src="nav.js"></script>
+  <script>
+    // Activity type filter
+    var buttons = document.querySelectorAll('.filter-btn');
+    var events = document.querySelectorAll('#events .event');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        buttons.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var f = btn.dataset.filter;
+        events.forEach(function (ev) {
+          ev.style.display = (f === 'all' || ev.dataset.type === f) ? '' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
