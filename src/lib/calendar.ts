@@ -13,7 +13,7 @@ const strip = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').
 const fold = (line: string) => line.match(/.{1,70}/gu)?.join('\r\n ') ?? line;
 
 function vevent(e: CmsEvent, site: string) {
-  const url = new URL(withBase(`/events/${e.slug}/`), site).href;
+  const url = new URL(withBase('/events/'), site).href;
   return [
     'BEGIN:VEVENT',
     `UID:${e.slug}@bikes4jlm.org`,
@@ -52,7 +52,7 @@ export function googleCalendarUrl(e: CmsEvent, site: string) {
     text: e.title,
     dates: `${compact(e.start)}/${compact(e.end)}`,
     ctz: 'Asia/Jerusalem',
-    details: [e.summary, strip(e.body)].filter(Boolean).join('\n\n') + `\n\n${new URL(withBase(`/events/${e.slug}/`), site).href}`,
+    details: [e.summary, strip(e.body)].filter(Boolean).join('\n\n') + `\n\n${new URL(withBase('/events/'), site).href}`,
     location: e.meeting_point ?? '',
   });
   return `https://calendar.google.com/calendar/render?${p}`;

@@ -18,11 +18,10 @@ npm run preview    # serve dist/
 
 | Route | Page | Source |
 |---|---|---|
-| `/` | Home — hero, next ride + countdown, activity & numbers, updates, gallery, WhatsApp, social | `src/pages/index.astro` |
+| `/` | Home — hero, next ride, activity & numbers, updates, gallery, WhatsApp, social | `src/pages/index.astro` |
 | `/join/` | Join activity — community group, topic groups, group rules, social feed | `src/pages/join.astro` |
 | `/about/` | About — vision & mission, activities, achievements & timeline, teams, partners | `src/pages/about.astro` |
-| `/events/` | Events — upcoming, annual ride, past events, "don't miss an event" | `src/pages/events/index.astro` |
-| `/events/<slug>/` | Event detail | `src/pages/events/[slug].astro` |
+| `/events/` | Events — upcoming (add to calendar + Facebook event), past events, "don't miss an event" | `src/pages/events/index.astro` |
 | `/updates/` | Updates feed with category filter (`?category=`) | `src/pages/updates/index.astro` |
 | `/updates/<slug>/` | Post | `src/pages/updates/[slug].astro` |
 | `/map/` | Bike-path map (municipality embed on desktop, static image + link on mobile) | `src/pages/map.astro` |
@@ -53,7 +52,7 @@ public/images/        photos, logos, QR
 - **Directus mode:** copy `.env.example` to `.env` and set `CMS_URL` + `CMS_TOKEN`. The build then reads `/items/*` at build time, and fails if the CMS is unreachable (the live site stays up).
 - **Languages:** text lives in `translations[]` keyed by `he`/`en`/`ar`. Collection items without a translation are hidden in that language; singletons fall back to Hebrew field by field. Only Hebrew is enabled today.
 - **Fixed choice lists the code branches on:** event `type` (`monthly_ride`, `annual_ride`, `workshop`, `other`), event `level` (`all`, `beginner`, `intermediate`, `advanced`), social `platform` (`instagram`, `facebook`, `x`, `whatsapp`, `youtube`, `tiktok`). Labels live in `src/lib/labels.ts`.
-- **Derived by the code:** upcoming vs past (from event end time, at build), the next ride, countdowns, calendar files.
+- **Derived by the code:** upcoming vs past (from event end time, at build), the next ride, calendar files.
 - **Field names in the mock are a proposal** — once the Directus data model exists, align `src/mock/` and the types in `cms.ts` to it (or add Zod schemas, per the contract).
 
 ### Mock content to replace

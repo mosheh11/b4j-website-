@@ -2,10 +2,8 @@
 import Layout from '../../layouts/Layout.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import Icon from '../../components/Icon.astro';
-import EventCard from '../../components/events/EventCard.astro';
-import AnnualFeature from '../../components/events/AnnualFeature.astro';
-import PastEventCard from '../../components/events/PastEventCard.astro';
-import StayInTouch from '../../components/events/StayInTouch.astro';
+import EventFeature from '../../components/EventFeature.astro';
+import WhatsAppCTA from '../../components/WhatsAppCTA.astro';
 import { getEvents, getPage, getGroupsSplit, type CmsImage } from '../../lib/cms';
 import { UI } from '../../lib/labels';
 
@@ -13,12 +11,6 @@ interface EventsPage { banner_title: string; banner_text?: string; banner_image?
 
 const [page, events, { community }] = await Promise.all([getPage<EventsPage>('events'), getEvents(), getGroupsSplit()]);
 const upcoming = events.filter((e) => e.is_upcoming);
-const past = events.filter((e) => !e.is_upcoming).reverse();
-const annual = upcoming.find((e) => e.type === 'annual_ride');
-const list = upcoming.filter((e) => e !== annual);
-/** The soonest ride gets the countdown. */
-const nextRide = list.find((e) => e.type === 'monthly_ride' || e.type === 'annual_ride');
-const PAST_INITIAL = 4;
 ---
 <Layout title="אירועים" description={page.banner_text}>
   <PageBanner title={page.banner_title} text={page.banner_text} image={page.banner_image} />
@@ -41,69 +33,22 @@ const PAST_INITIAL = 4;
         )}
       </div>
     ) : (
-      <>
-        {annual && <div class="annual-wrap reveal"><AnnualFeature event={annual} /></div>}
-        {list.length > 0 && (
-          <ul role="list" class="grid">
-            {list.map((e) => <li class="reveal"><EventCard event={e} countdown={e === nextRide} /></li>)}
-          </ul>
-        )}
-      </>
+      <ul role="list" class="upcoming-list">
+        {upcoming.map((e, i) => <li class="reveal"><EventFeature event={e} next={i === 0} /></li>)}
+      </ul>
     )}
   </section>
 
-  <!-- PAST -->
-  {past.length > 0 && (
-    <section id="past" class="container section" aria-labelledby="past-title">
-      <div class="section-head">
-        <h2 id="past-title" class="h2">אירועים שהיו</h2>
-        <p class="lead">רגעים מהרכיבות והמפגשים האחרונים – והגלריות שלהם.</p>
-      </div>
-      <ul role="list" class="past-grid" id="past-list">
-        {past.map((e, i) => <li data-extra={i >= PAST_INITIAL ? '' : undefined}><PastEventCard event={e} /></li>)}
-      </ul>
-      {past.length > PAST_INITIAL && (
-        <div class="more-wrap">
-          <button type="button" class="btn btn-outline" id="past-more" aria-controls="past-list" aria-expanded="false" hidden>
-            <Icon name="plus" size={18} />{UI.loadMore}
-            <span class="more-count">({past.length - PAST_INITIAL})</span>
-          </button>
-        </div>
-      )}
-    </section>
-  )}
-
   <!-- STAY IN TOUCH -->
-  <section id="stay" class="container section" aria-labelledby="stay-title">
-    <div class="reveal"><StayInTouch /></div>
+  <section id="stay" class="container section">
+    <div class="reveal"><WhatsAppCTA title="לא רוצים לפספס אף רכיבה?" text="הצטרפו לוואטסאפ" /></div>
   </section>
 </Layout>
 
-<script>
-  // Progressive enhancement: without JS every past event is visible.
-  const btn = document.getElementById('past-more') as HTMLButtonElement | null;
-  const extras = Array.from(document.querySelectorAll<HTMLElement>('#past-list > [data-extra]'));
-  if (btn && extras.length) {
-    const STEP = 4;
-    extras.forEach((li) => (li.hidden = true));
-    btn.hidden = false;
-    const count = btn.querySelector('.more-count');
-    btn.addEventListener('click', () => {
-      const next = extras.filter((li) => li.hidden).slice(0, STEP);
-      next.forEach((li) => (li.hidden = false));
-      next[0]?.querySelector<HTMLAnchorElement>('h3 a')?.focus();
-      const left = extras.filter((li) => li.hidden).length;
-      if (count) count.textContent = `(${left})`;
-      if (!left) { btn.hidden = true; btn.setAttribute('aria-expanded', 'true'); }
-    });
-  }
-</script>
-
 <style>
   .count { font-size: var(--fs-small); font-weight: 500; color: var(--muted); }
-  .annual-wrap { margin-bottom: 24px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 24px; }
-  .grid > li { min-width: 0; }
+  .upcoming-list { display: flex; flex-direction: column; gap: 24px; }
+  .upcoming-list > li { min-width: 0; }
 
   .empty {
     display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;
@@ -112,15 +57,7 @@ const PAST_INITIAL = 4;
   .empty p { max-width: 32em; font-size: var(--fs-lead); color: var(--slate); }
   .empty-ico { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--white); color: var(--purple); }
 
-  .past-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-  .past-grid > li[hidden] { display: none; }
-  .more-wrap { display: flex; justify-content: center; margin-top: 28px; }
-  .more-count { font-weight: 500; color: inherit; opacity: .7; }
-
-  @media (max-width: 1100px) { .past-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 760px) {
     .empty .btn { width: 100%; }
-    .more-wrap .btn { width: 100%; }
   }
-  @media (max-width: 560px) { .past-grid { grid-template-columns: 1fr; gap: 12px; } }
 </style>

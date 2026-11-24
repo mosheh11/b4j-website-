@@ -5,12 +5,11 @@ import StatsGrid from '../components/StatsGrid.astro';
 import PostCard from '../components/PostCard.astro';
 import SocialFeed from '../components/SocialFeed.astro';
 import WhatsAppCTA from '../components/WhatsAppCTA.astro';
-import AddToCalendar from '../components/AddToCalendar.astro';
-import EventMeta from '../components/EventMeta.astro';
+import EventFeature from '../components/EventFeature.astro';
 import {
   getPage, getNextRide, getPosts, getPostCategories, getGallery, assetUrl, withBase,
 } from '../lib/cms';
-import { UI, EVENT_TYPE } from '../lib/labels';
+import { UI } from '../lib/labels';
 
 interface HomePage {
   hero_title: string; hero_title_highlight?: string; hero_text?: string; hero_image?: { id: string; description?: string };
@@ -53,27 +52,8 @@ const marquee = phrases.length ? Array.from({ length: Math.ceil(8 / phrases.leng
 
   <!-- NEXT RIDE -->
   {ride && (
-    <section id="ride" class="container ride-wrap" aria-labelledby="ride-title">
-      <article class="ride">
-        <div class="ride-body">
-          <div class="ride-top">
-            <span class="eyebrow">{UI.nextEvent} · {EVENT_TYPE[ride.type]}</span>
-            <a href={withBase('/events/')} class="all-events"><Icon name="calendar" size={18} />{UI.allEvents}</a>
-          </div>
-          <h2 id="ride-title" class="ride-title"><a href={withBase(`/events/${ride.slug}/`)}>{ride.title}</a></h2>
-          <EventMeta event={ride} />
-          <div class="ride-foot">
-            <div class="cluster" style="--cluster:10px">
-              <AddToCalendar event={ride} variant="primary" />
-            </div>
-          </div>
-        </div>
-        {ride.image && (
-          <div class="ride-art">
-            <img src={assetUrl(ride.image, { width: 900 })} alt={ride.image.description ?? ''} width="760" height="520" loading="lazy" />
-          </div>
-        )}
-      </article>
+    <section id="ride" class="container ride-wrap" aria-label={UI.nextEvent}>
+      <EventFeature event={ride} next allLink headingLevel="h2" elevated />
     </section>
   )}
 
@@ -155,24 +135,6 @@ const marquee = phrases.length ? Array.from({ length: Math.ceil(8 / phrases.leng
 
   /* ---------- Next ride ---------- */
   .ride-wrap { margin-top: -130px; position: relative; }
-  .ride {
-    background: var(--white); border-radius: var(--r-lg); box-shadow: var(--shadow-card);
-    display: flex; flex-wrap: wrap;
-  }
-  .ride-body { flex: 1 1 520px; min-width: 0; padding: clamp(28px, 4vw, 44px) clamp(22px, 4vw, 48px); display: flex; flex-direction: column; gap: 20px; }
-  .ride-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; }
-  .all-events { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); font-weight: 500; text-decoration: none; }
-  .all-events:hover { color: var(--purple); }
-  .ride-title { font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.375rem); line-height: 1.15; letter-spacing: -0.02em; max-width: 22ch; }
-  .ride-title a { color: inherit; text-decoration: none; }
-  .ride-title a:hover { color: var(--purple); }
-  .ride-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; margin-top: 8px; }
-  .ride-art {
-    flex: 1 1 380px; min-width: 0; min-height: 300px; background: var(--ink); position: relative; overflow: hidden;
-    border-start-end-radius: var(--r-lg); border-end-end-radius: var(--r-lg);
-  }
-  /* Anchor the crop to the left edge, where event artwork carries the logo. */
-  .ride-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left center; }
 
   /* ---------- Activity ---------- */
   .activity { display: flex; flex-wrap: wrap; gap: 40px 56px; align-items: center; }
@@ -212,10 +174,6 @@ const marquee = phrases.length ? Array.from({ length: Math.ceil(8 / phrases.leng
     .hero-actions .btn { flex: 1 1 100%; }
     .hero-art img { max-width: 440px; }
     .ride-wrap { margin-top: -96px; }
-    .ride-art { order: -1; min-height: 0; aspect-ratio: 1858 / 1269; flex-basis: 100%; border-radius: var(--r-lg) var(--r-lg) 0 0; }
-    .ride-foot { flex-direction: column; align-items: stretch; }
-    .ride-foot .cluster > :global(*) { flex: 1 1 auto; }
-    .ride-foot :global(.btn) { width: 100%; }
     .marquee { margin-top: 64px; }
     /* Gallery becomes a swipe carousel */
     .g-grid {
