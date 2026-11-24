@@ -6,6 +6,7 @@
  * collections; section headings, link labels and icons are owned by the code.
  */
 import Layout from '../layouts/Layout.astro';
+import WhatsAppCTA from '../components/WhatsAppCTA.astro';
 import Icon from '../components/Icon.astro';
 import StatsGrid from '../components/StatsGrid.astro';
 import {
@@ -23,8 +24,9 @@ interface AboutPage {
   activities?: Array<{ title: string; text?: string }>;
 }
 
-const [page, teams, milestones, partners] = await Promise.all([
+const [page, teams, milestones, partners, home] = await Promise.all([
   getPage<AboutPage>('about'), getTeams(), getMilestones(), getPartners(),
+  getPage<{ whatsapp_title?: string; whatsapp_text?: string }>('home'),
 ]);
 
 const values = page.values ?? [];
@@ -194,21 +196,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
   )}
 
   <!-- JOIN CTA -->
-  <section class="container section" aria-labelledby="cta-title">
-    <div class="cta reveal">
-      <svg class="cta-rings" viewBox="0 0 400 400" aria-hidden="true">
-        <circle cx="200" cy="200" r="180" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 12" />
-        <circle cx="200" cy="200" r="130" fill="none" stroke="currentColor" stroke-width="2" />
-        <circle cx="200" cy="200" r="80" fill="none" stroke="currentColor" stroke-width="2" />
-      </svg>
-      <div class="cta-copy">
-        <h2 id="cta-title" class="cta-title">רוצים לרכוב איתנו?</h2>
-        <p class="cta-text">בואו לרכיבה הקרובה, הצטרפו לאחד הצוותים או לקבוצות הוואטסאפ שלנו. יש מקום לכולם.</p>
-      </div>
-      <div class="cta-actions">
-        <a href={withBase('/join/')} class="btn btn-white btn-lg">{UI.joinActivity}<Icon name="arrow" size={18} stroke={2.2} /></a>
-      </div>
-    </div>
+  <section class="container section">
+    <div class="reveal"><WhatsAppCTA title={home.whatsapp_title ?? ''} text={home.whatsapp_text} /></div>
   </section>
 </Layout>
 
@@ -334,19 +323,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .partner :global(.partner-ext) { position: absolute; top: 14px; inset-inline-end: 14px; color: var(--muted); }
 
   /* ---------- Join CTA ---------- */
-  .cta {
-    position: relative; overflow: hidden; isolation: isolate;
-    background: var(--purple); color: var(--white); border-radius: var(--r-xl);
-    padding: clamp(36px, 5vw, 64px) clamp(24px, 4.5vw, 56px);
-    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px 40px;
-  }
-  .cta-rings { position: absolute; inset-inline-start: -90px; bottom: -120px; width: 420px; height: 420px; color: var(--white); opacity: .16; z-index: -1; }
-  .cta-copy { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
-  .cta-title { color: var(--white); font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem); line-height: 1.08; letter-spacing: -0.03em; }
-  .cta-text { font-size: 1.1875rem; line-height: 1.7; color: rgba(255, 255, 255, .88); max-width: 30em; }
-  .cta-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-  .cta .btn-white { border-color: var(--white); }
-  .cta .btn-white:hover { --btn-bg: var(--ink); --btn-fg: var(--white); border-color: var(--ink); }
 
   /* ---------- Tablet ---------- */
   @media (max-width: 1100px) {
@@ -382,7 +358,5 @@ const pad = (n: number) => String(n).padStart(2, '0');
     .partner { min-height: 88px; padding: 18px 16px; }
     .partner-name { font-size: 0.9375rem; }
     .partner :global(.partner-ext) { top: 10px; inset-inline-end: 10px; }
-    .cta-actions { flex-direction: column; width: 100%; }
-    .cta-actions .btn { width: 100%; white-space: normal; text-align: center; }
   }
 </style>
