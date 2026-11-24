@@ -20,7 +20,7 @@ const fb = link('facebook'), ig = link('instagram'), x = link('x');
 const igUser = ig?.url.match(/instagram\.com\/([^/?#]+)/)?.[1];
 const xUser = x?.url.match(/(?:x|twitter)\.com\/([^/?#]+)/)?.[1];
 const fbSrc = fb && `https://www.facebook.com/plugins/page.php?${new URLSearchParams({
-  href: fb.url, tabs: 'timeline', width: '500', height: '560', small_header: 'true',
+  href: fb.url, tabs: 'timeline', small_header: 'true',
   adapt_container_width: 'true', hide_cover: 'false', show_facepile: 'false', locale: 'he_IL',
 })}`;
 ---
@@ -29,7 +29,7 @@ const fbSrc = fb && `https://www.facebook.com/plugins/page.php?${new URLSearchPa
     <article class="card net-card">
       <header><span class="net"><Icon name="facebook" size={18} />פייסבוק</span><a href={fb.url} target="_blank" rel="noopener" class="link-arrow">לעמוד</a></header>
       <div class="embed">
-        <iframe src={fbSrc} title="עמוד הפייסבוק של אופניים בשביל ירושלים" loading="lazy" scrolling="no" allow="encrypted-media; clipboard-write; web-share"></iframe>
+        <iframe data-fb-src={fbSrc} title="עמוד הפייסבוק של אופניים בשביל ירושלים" scrolling="no" allow="encrypted-media; clipboard-write; web-share"></iframe>
       </div>
     </article>
   )}
@@ -45,7 +45,7 @@ const fbSrc = fb && `https://www.facebook.com/plugins/page.php?${new URLSearchPa
     <article class="card net-card">
       <header><span class="net"><Icon name="x" size={18} />X</span><a href={x.url} target="_blank" rel="noopener" class="link-arrow" dir="auto">@{xUser}</a></header>
       <div class="embed embed-x" data-x-embed>
-        <a class="twitter-timeline" data-lang="he" data-height="560" data-chrome="noheader nofooter transparent" data-dnt="true" href={`https://twitter.com/${xUser}`}>
+        <a class="twitter-timeline" data-lang="he" data-chrome="noheader nofooter transparent" data-dnt="true" href={`https://twitter.com/${xUser}`}>
           <span class="x-follow">
             <span class="x-logo"><Icon name="x" size={34} stroke={2.2} /></span>
             <b dir="ltr">@{xUser}</b>
@@ -59,6 +59,22 @@ const fbSrc = fb && `https://www.facebook.com/plugins/page.php?${new URLSearchPa
 </div>
 
 <script>
+  // Facebook's plugin renders at a fixed size, so give it the embed box's actual size
+  // (all three embeds share one height). Loaded when near the viewport; re-sized on rotate/resize.
+  const fbFrames = document.querySelectorAll<HTMLIFrameElement>('iframe[data-fb-src]');
+  const sizeFb = (f: HTMLIFrameElement) => {
+    const box = f.parentElement!;
+    const w = Math.min(500, Math.round(box.clientWidth)), h = Math.round(box.clientHeight);
+    const src = `${f.dataset.fbSrc}&width=${w}&height=${h}`;
+    if (w > 0 && f.src !== src) f.src = src;
+  };
+  if (fbFrames.length) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { sizeFb(e.target as HTMLIFrameElement); io.unobserve(e.target); } }), { rootMargin: '600px' });
+    fbFrames.forEach((f) => io.observe(f));
+    let t: number | undefined, lastW = innerWidth;
+    addEventListener('resize', () => { if (innerWidth === lastW) return; lastW = innerWidth; clearTimeout(t); t = window.setTimeout(() => fbFrames.forEach((f) => f.src && sizeFb(f)), 300); });
+  }
+
   // Load X's widget script only when its card is near the viewport.
   const xs = document.querySelectorAll('[data-x-embed]');
   if (xs.length) {
@@ -77,11 +93,12 @@ const fbSrc = fb && `https://www.facebook.com/plugins/page.php?${new URLSearchPa
 
 <style>
   .feed { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-  .net-card { display: flex; flex-direction: column; padding: 16px; gap: 12px; color: var(--ink); }
+  .net-card { display: flex; flex-direction: column; padding: 16px; gap: 12px; color: var(--ink); container-type: inline-size; }
   header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-inline: 4px; }
   .net { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
   header .link-arrow { min-height: 36px; }
-  .embed { height: 560px; border-radius: var(--r-sm); overflow: hidden; background: var(--sand); }
+  /* Same height in every card: Instagram's profile embed is ~header + two rows of square tiles. */
+  .embed { height: clamp(360px, calc(150px + 66.6cqw), 520px); border-radius: var(--r-sm); overflow: hidden; background: var(--sand); }
   .embed iframe { width: 100%; height: 100%; border: 0; display: block; background: var(--white); }
   .embed-x { overflow-y: auto; background: var(--white); }
   .embed-x > a { display: flex; align-items: center; justify-content: center; height: 100%; text-decoration: none; color: var(--ink); }
@@ -99,6 +116,5 @@ const fbSrc = fb && `https://www.facebook.com/plugins/page.php?${new URLSearchPa
     }
     .feed::-webkit-scrollbar { display: none; }
     .net-card { flex: 0 0 min(88%, 420px); scroll-snap-align: center; }
-    .embed { height: 500px; }
   }
 </style>
