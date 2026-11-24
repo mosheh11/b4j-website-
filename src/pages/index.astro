@@ -171,7 +171,8 @@ const marquee = phrases.length ? Array.from({ length: Math.ceil(8 / phrases.leng
     flex: 1 1 380px; min-width: 0; min-height: 300px; background: var(--ink); position: relative; overflow: hidden;
     border-start-end-radius: var(--r-lg); border-end-end-radius: var(--r-lg);
   }
-  .ride-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  /* Anchor the crop to the left edge, where event artwork carries the logo. */
+  .ride-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left center; }
 
   /* ---------- Activity ---------- */
   .activity { display: flex; flex-wrap: wrap; gap: 40px 56px; align-items: center; }
@@ -211,7 +212,7 @@ const marquee = phrases.length ? Array.from({ length: Math.ceil(8 / phrases.leng
     .hero-actions .btn { flex: 1 1 100%; }
     .hero-art img { max-width: 440px; }
     .ride-wrap { margin-top: -96px; }
-    .ride-art { order: -1; min-height: 200px; flex-basis: 100%; border-radius: var(--r-lg) var(--r-lg) 0 0; }
+    .ride-art { order: -1; min-height: 0; aspect-ratio: 1858 / 1269; flex-basis: 100%; border-radius: var(--r-lg) var(--r-lg) 0 0; }
     .ride-foot { flex-direction: column; align-items: stretch; }
     .ride-foot .cluster > :global(*) { flex: 1 1 auto; }
     .ride-foot :global(.btn) { width: 100%; }
