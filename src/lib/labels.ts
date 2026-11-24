@@ -9,7 +9,7 @@ export const NAV = [
   { href: '/join/', label: 'הצטרפות לפעילות' },
   { href: '/about/', label: 'אודות' },
   { href: '/events/', label: 'אירועים' },
-  { href: '/updates/', label: 'עדכונים' },
+  { href: '/updates/', label: 'מידע ועדכונים' },
   { href: '/map/', label: 'מפה' },
 ] as const;
 

@@ -11,13 +11,13 @@ interface MapPage {
   static_map_image?: CmsImage | null; municipality_map_url?: string;
 }
 const [page, groups] = await Promise.all([getPage<MapPage>('map'), getWhatsappGroups()]);
-const routeGroup = groups.find((g) => g.name.includes('עדכוני מסלול'));
+const routeGroup = groups.find((g) => g.name.includes('עדכוני מסלול')) ?? groups[0];
 
 const helpers = [
   {
     icon: 'flag', tone: 'purple', title: 'דיווח על מפגע בשביל',
-    text: 'בור, חסימה או שלט חסר? קראו עמדות מהשטח ושתפו אותנו במה שראיתם.',
-    href: withBase('/updates/?category=field_reports'), label: 'לעמדות מהשטח', external: false,
+    text: 'בור, חסימה או שלט חסר? קראו את העדכונים האחרונים ושתפו אותנו במה שראיתם.',
+    href: withBase('/updates/?category=updates'), label: 'לעדכונים', external: false,
   },
   {
     icon: 'users', tone: 'stone', title: 'רכיבות קבוצתיות',

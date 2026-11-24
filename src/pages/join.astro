@@ -7,12 +7,14 @@ import RulesAccordion from '../components/join/RulesAccordion.astro';
 import { getPage, getGroupsSplit, withBase } from '../lib/cms';
 import type { CmsImage } from '../lib/cms';
 import { UI } from '../lib/labels';
+import { qrSvg } from '../lib/qr';
 
 interface JoinPage {
   banner_title: string; banner_text?: string; banner_image?: CmsImage | null;
   community_cta_text?: string; group_rules?: string;
 }
 const [page, { community, topics }] = await Promise.all([getPage<JoinPage>('join'), getGroupsSplit()]);
+const communityQr = community ? await qrSvg(community.invite_url) : '';
 ---
 <Layout title={UI.joinActivity} description={page.banner_text}>
   <div class="join-top">
@@ -41,7 +43,7 @@ const [page, { community, topics }] = await Promise.all([getPage<JoinPage>('join
           </a>
         </div>
         <figure class="qr">
-          <img src={withBase('/images/qr-updates.svg')} alt="קוד QR להצטרפות לקבוצה הכללית בוואטסאפ" width="168" height="168" loading="lazy" />
+          <div class="qr-img" role="img" aria-label="קוד QR להצטרפות לקבוצה הכללית בוואטסאפ" set:html={communityQr} />
           <figcaption>או סרקו מהטלפון</figcaption>
         </figure>
       </div>
@@ -53,7 +55,6 @@ const [page, { community, topics }] = await Promise.all([getPage<JoinPage>('join
     <section id="groups" class="container section" aria-labelledby="groups-title">
       <div class="section-head">
         <h2 id="groups-title" class="h2">קבוצות לפי נושא</h2>
-        <p class="lead">אפשר להצטרף לכמה קבוצות שרוצים – וגם לעזוב בכל רגע.</p>
       </div>
       <ul role="list" class="groups">
         {topics.map((g) => (
@@ -114,7 +115,8 @@ const [page, { community, topics }] = await Promise.all([getPage<JoinPage>('join
   .community-text { font-size: var(--fs-lead); line-height: 1.7; color: var(--slate); max-width: 34em; }
   .community-btn { margin-top: 8px; min-height: 64px; padding: 0 36px; font-size: 1.125rem; }
   .qr { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  .qr img { width: 168px; height: 168px; background: var(--white); border-radius: 20px; padding: 12px; box-shadow: 0 12px 30px rgba(31, 122, 95, 0.16); }
+  .qr-img { width: 168px; height: 168px; box-sizing: border-box; background: var(--white); border-radius: 20px; padding: 12px; box-shadow: 0 12px 30px rgba(31, 122, 95, 0.16); }
+  .qr-img :global(svg) { width: 100%; height: 100%; display: block; }
   .qr figcaption { font-size: var(--fs-small); font-weight: 700; color: var(--muted); }
 
   /* ---------- Topic groups ---------- */

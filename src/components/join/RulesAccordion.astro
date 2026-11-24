@@ -19,7 +19,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 {items.length > 0 ? (
   <div class="rules">
     {items.map((it, i) => (
-      <details class="rule" open={i === 0}>
+      <details class="rule" name="group-rules" open={i === 0}>
         <summary>
           <span class="num" aria-hidden="true">{pad(i + 1)}</span>
           <span class="title">{it.title}</span>
@@ -32,6 +32,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
 ) : html ? (
   <div class="prose" set:html={html} />
 ) : null}
+
+<script>
+  document.querySelectorAll<HTMLDetailsElement>('details[name="group-rules"]').forEach((d, _, all) => {
+    d.addEventListener('toggle', () => {
+      if (d.open) all.forEach((o) => { if (o !== d) o.open = false; });
+    });
+  });
+</script>
 
 <style>
   .rules { display: flex; flex-direction: column; gap: 12px; }

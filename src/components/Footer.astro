@@ -1,9 +1,9 @@
 ---
 import Icon from './Icon.astro';
-import { getSiteSettings, getPartners, getGroupsSplit, assetUrl, withBase } from '../lib/cms';
+import { getSiteSettings, getPartners, assetUrl, withBase } from '../lib/cms';
 import { SOCIAL, UI } from '../lib/labels';
 
-const [site, partners, { community }] = await Promise.all([getSiteSettings(), getPartners(), getGroupsSplit()]);
+const [site, partners] = await Promise.all([getSiteSettings(), getPartners()]);
 const year = new Date().getFullYear();
 
 const columns = [
@@ -21,25 +21,15 @@ const columns = [
   ] },
   { title: 'משאבים', links: [
     { href: withBase('/map/'), label: 'מפת שבילים' },
-    { href: withBase('/updates/'), label: 'עדכונים מהשביל' },
+    { href: withBase('/updates/'), label: 'מידע ועדכונים' },
     { href: withBase('/updates/?category=tips'), label: 'טיפים לרכיבה' },
+    { href: withBase('/updates/?category=position_papers'), label: 'ניירות עמדה' },
     { href: withBase('/calendar.ics'), label: 'יומן אירועים מסונכרן' },
   ] },
 ].map((c) => ({ ...c, links: c.links.filter(Boolean) as Array<{ href: string; label: string; external?: boolean }> }));
 ---
 <footer class="site-footer">
   <div class="container">
-    <section class="newsletter" aria-labelledby="nl-title">
-      <div class="stack" style="--stack:8px">
-        <h2 id="nl-title" class="h3">לא מפספסים אף רכיבה</h2>
-        <p>עדכון אחד בחודש: הרכיבות הקרובות, שינויים בשבילים ומה חדש בעמותה.</p>
-      </div>
-      <div class="nl-actions">
-        {site.newsletter_url && <a class="btn btn-primary" href={site.newsletter_url} target="_blank" rel="noopener"><Icon name="mail" size={18} />{UI.newsletter}</a>}
-        {community && <a class="btn btn-ghost-dark" href={community.invite_url} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} />{UI.joinWhatsapp}</a>}
-      </div>
-    </section>
-
     <div class="main">
       <div class="about">
         <a href={withBase('/')} class="logo" aria-label={`${site.name} – דף הבית`}>
@@ -99,16 +89,6 @@ const columns = [
   .site-footer a { color: var(--night-text); text-decoration: none; }
   .site-footer a:hover { color: var(--white); }
 
-  .newsletter {
-    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px 40px;
-    padding: 48px 0; border-bottom: 1px solid var(--night-line);
-  }
-  .newsletter h2 { color: var(--white); }
-  .newsletter p { color: var(--night-text); }
-  .nl-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-  .site-footer .btn-primary, .site-footer .btn-primary:hover { color: var(--white); }
-  .btn-ghost-dark { --btn-bg: transparent; --btn-fg: var(--white); border-color: #3A3145; }
-  .site-footer .btn-ghost-dark:hover { --btn-bg: #241D2C; color: var(--white); }
 
   .main { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 48px 56px; padding: 56px 0; }
   .about { flex: 1 1 260px; max-width: 340px; display: flex; flex-direction: column; gap: 20px; line-height: 1.7; }
@@ -137,7 +117,6 @@ const columns = [
 
   @media (max-width: 760px) {
     .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 20px; }
-    .nl-actions, .nl-actions .btn { width: 100%; }
     .main { padding: 44px 0; }
   }
 </style>

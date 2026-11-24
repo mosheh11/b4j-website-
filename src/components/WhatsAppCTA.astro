@@ -1,64 +1,114 @@
 ---
-/** Lilac invite band: "באב״י הכל קורה בוואטסאפ" + group chips + QR (homepage design). */
+/**
+ * Lilac invite band: "באב״י הכל קורה בוואטסאפ".
+ * Every WhatsApp group is a chip; the first (the community group) starts selected.
+ * Picking a chip swaps the QR code and the join button to that group.
+ */
 import Icon from './Icon.astro';
-import { getGroupsSplit, withBase } from '../lib/cms';
-import { UI } from '../lib/labels';
+import { getGroupsSplit } from '../lib/cms';
+import { qrSvg } from '../lib/qr';
 
-interface Props { title: string; text?: string; maxChips?: number }
-const { title, text, maxChips = 6 } = Astro.props;
+interface Props { title: string; text?: string }
+const { title, text } = Astro.props;
 const { community, topics } = await getGroupsSplit();
+const groups = [community, ...topics].filter(Boolean);
+const qrs = await Promise.all(groups.map((g) => qrSvg(g.invite_url)));
+const first = groups[0];
 ---
-<div class="wa-cta">
-  <svg class="rings" viewBox="0 0 400 400" aria-hidden="true">
-    <circle cx="200" cy="200" r="180" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 12" />
-    <circle cx="200" cy="200" r="130" fill="none" stroke="currentColor" stroke-width="2" />
-    <circle cx="200" cy="200" r="80" fill="none" stroke="currentColor" stroke-width="2" />
-  </svg>
-  <div class="copy">
-    <h2 class="title">{title}</h2>
-    {text && <p class="text">{text}</p>}
-    <ul role="list" class="chips">
-      {topics.slice(0, maxChips).map((g) => <li><a href={g.invite_url} target="_blank" rel="noopener">{g.name}</a></li>)}
-      <li><a href={withBase('/join/#groups')} class="more">כל הקבוצות ←</a></li>
-    </ul>
-    {community && (
-      <a href={community.invite_url} target="_blank" rel="noopener" class="btn btn-whatsapp btn-lg join">
-        <Icon name="whatsapp" size={22} />{UI.joinWhatsapp}
+{first && (
+  <div class="wa-cta" data-wa-cta>
+    <svg class="rings" viewBox="0 0 400 400" aria-hidden="true">
+      <circle cx="200" cy="200" r="180" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 12" />
+      <circle cx="200" cy="200" r="130" fill="none" stroke="currentColor" stroke-width="2" />
+      <circle cx="200" cy="200" r="80" fill="none" stroke="currentColor" stroke-width="2" />
+    </svg>
+    <div class="copy">
+      <h2 class="title">{title}</h2>
+      {text && <p class="text">{text}</p>}
+      <div class="chips" role="group" aria-label="בחירת קבוצת וואטסאפ">
+        {groups.map((g, i) => (
+          <button type="button" class="chip-btn" aria-pressed={i === 0 ? 'true' : 'false'} data-i={i} data-url={g.invite_url} data-name={g.name}>
+            {g.name}
+          </button>
+        ))}
+      </div>
+      <p class="desc" data-desc aria-live="polite">{first.description}</p>
+      <a href={first.invite_url} target="_blank" rel="noopener" class="btn btn-whatsapp btn-lg join" data-join>
+        <Icon name="whatsapp" size={22} />
+        <span>הצטרפות ל<span data-join-name>{first.name}</span></span>
       </a>
-    )}
-  </div>
-  {community && (
+    </div>
     <figure class="qr">
-      <img src={withBase('/images/qr-updates.svg')} alt="קוד QR להצטרפות לקבוצת הוואטסאפ של הקהילה" width="168" height="168" loading="lazy" />
-      <figcaption>סרקו להצטרפות</figcaption>
+      <div class="qr-box">
+        {qrs.map((svg, i) => (
+          <div class="qr-code" data-qr={i} hidden={i !== 0} role="img" aria-label={`קוד QR להצטרפות לקבוצה ${groups[i].name}`} set:html={svg} />
+        ))}
+      </div>
+      <figcaption><span class="scan">סרקו להצטרפות</span><b data-qr-name>{first.name}</b></figcaption>
     </figure>
-  )}
-</div>
+    <script type="application/json" data-descs set:html={JSON.stringify(groups.map((g) => g.description ?? ''))} />
+  </div>
+)}
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-wa-cta]').forEach((root) => {
+    const chips = root.querySelectorAll<HTMLButtonElement>('.chip-btn');
+    const qrs = root.querySelectorAll<HTMLElement>('[data-qr]');
+    const join = root.querySelector<HTMLAnchorElement>('[data-join]')!;
+    const joinName = root.querySelector<HTMLElement>('[data-join-name]')!;
+    const qrName = root.querySelector<HTMLElement>('[data-qr-name]')!;
+    const desc = root.querySelector<HTMLElement>('[data-desc]')!;
+    const descs: string[] = JSON.parse(root.querySelector('[data-descs]')?.textContent || '[]');
+    chips.forEach((chip) => chip.addEventListener('click', () => {
+      const i = Number(chip.dataset.i);
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      qrs.forEach((q) => (q.hidden = Number(q.dataset.qr) !== i));
+      join.href = chip.dataset.url!;
+      joinName.textContent = qrName.textContent = chip.dataset.name!;
+      desc.textContent = descs[i] ?? '';
+    }));
+  });
+</script>
 
 <style>
   .wa-cta {
     position: relative; overflow: hidden; isolation: isolate;
-    background: var(--lilac); border-radius: var(--r-xl); padding: clamp(36px, 5vw, 64px) clamp(24px, 4.5vw, 56px);
+    background: var(--lilac); border-radius: var(--r-xl); padding: clamp(32px, 5vw, 64px) clamp(22px, 4.5vw, 56px);
     display: flex; flex-wrap: wrap; gap: 40px; align-items: center; justify-content: space-between;
   }
   .rings { position: absolute; inset-inline-end: -80px; top: -80px; width: 420px; height: 420px; color: var(--purple); opacity: .18; z-index: -1; }
   .copy { flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
   .title { font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem); line-height: 1.08; letter-spacing: -0.03em; }
-  .text { font-size: 1.1875rem; line-height: 1.7; color: var(--slate); max-width: 520px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chips a {
-    display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: var(--r-pill);
-    background: var(--white); border: 1px solid var(--lilac-line); color: var(--ink); font-size: var(--fs-label);
-    text-decoration: none; transition: border-color .2s, background-color .2s;
+  .text { font-size: 1.1875rem; line-height: 1.7; color: var(--slate); max-width: 540px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .chip-btn {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: var(--r-pill);
+    background: var(--white); border: 1px solid var(--lilac-line); color: var(--ink); font-size: var(--fs-label); font-weight: 500;
+    cursor: pointer; transition: border-color .2s, background-color .2s, color .2s;
   }
-  .chips a:hover { border-color: var(--ink); }
-  .chips .more { background: transparent; border-color: transparent; color: var(--purple); font-weight: 500; }
-  .join { align-self: flex-start; margin-top: 8px; }
-  .qr { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  .qr img { width: 168px; height: 168px; background: var(--white); border-radius: 20px; padding: 12px; box-shadow: 0 12px 30px rgba(84, 52, 201, 0.14); }
-  .qr figcaption { font-size: var(--fs-small); font-weight: 700; color: var(--muted); }
+  .chip-btn:hover { border-color: var(--ink); }
+  .chip-btn[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--white); }
+
+  .desc { font-size: var(--fs-small); color: var(--muted); min-height: 1.6em; }
+  .join { align-self: flex-start; max-width: 100%; white-space: normal; text-align: center; }
+
+  .qr { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .qr-box {
+    width: 196px; height: 196px; background: var(--white); border-radius: 22px; padding: 16px;
+    box-shadow: 0 12px 30px rgba(84, 52, 201, 0.14);
+  }
+  .qr-code, .qr-code :global(svg) { width: 100%; height: 100%; display: block; }
+  .qr-code[hidden] { display: none; }
+  .qr figcaption { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; max-width: 220px; }
+  .scan { font-size: 0.8125rem; color: var(--muted); }
+  .qr b { font-size: var(--fs-small); color: var(--ink); }
+
   @media (max-width: 760px) {
     .qr { display: none; } /* on a phone you tap, you don't scan */
     .join { align-self: stretch; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip-btn { flex: none; }
   }
 </style>
