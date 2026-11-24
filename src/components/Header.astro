@@ -25,7 +25,6 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
     </nav>
 
     <div class="actions">
-      <a href={withBase('/join/')} class="btn btn-primary btn-sm cta">{UI.join}</a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
         <span class="visually-hidden" data-menu-label>{UI.menu}</span>
         <Icon name="menu" size={24} class="i-open" />
@@ -152,9 +151,6 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
     .nav { display: none; }
     .menu-btn { display: inline-flex; }
     .brand img, .is-scrolled .brand img { height: 52px; }
-  }
-  @media (max-width: 420px) {
-    .cta { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     .mobile-menu, .mobile-menu.is-open li { transition: none; animation: none; }

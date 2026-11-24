@@ -39,7 +39,6 @@ const marquee = page.marquee ?? [];
         {page.hero_text && <p class="lead">{page.hero_text}</p>}
         <div class="cluster hero-actions" style="--cluster:14px">
           <a href={withBase('/join/')} class="btn btn-primary btn-lg">{UI.joinActivity}<Icon name="arrow" size={18} stroke={2.2} /></a>
-          {ride && <a href="#ride" class="btn btn-white btn-lg">לרכיבה הקרובה</a>}
         </div>
       </div>
       {page.hero_image && (
