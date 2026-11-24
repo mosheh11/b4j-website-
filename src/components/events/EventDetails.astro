@@ -11,7 +11,7 @@ const when = sameDay(e.start, e.end)
   ? `${formatDay(e.start)} · ${formatTime(e.start)}–${formatTime(e.end)}`
   : `${formatDay(e.start)} ${formatTime(e.start)} – ${formatDay(e.end)} ${formatTime(e.end)}`;
 const duration = formatDuration(e.start, e.end);
-const level = [e.level && EVENT_LEVEL[e.level], e.distance_km && `${e.distance_km} ק״מ`].filter(Boolean).join(' · ');
+const level = [e.level && e.level !== 'all' && EVENT_LEVEL[e.level], e.distance_km && `${e.distance_km} ק״מ`].filter(Boolean).join(' · ');
 ---
 <ul role="list" class:list={['details', cls]}>
   <li><Icon name="calendar" size={18} /><span><span class="visually-hidden">מתי: </span>{when}{duration && <span class="soft"> ({duration})</span>}</span></li>

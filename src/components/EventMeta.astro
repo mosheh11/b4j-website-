@@ -15,7 +15,7 @@ const duration = formatDuration(e.start, e.end);
   <li class="chip"><Icon name="calendar" size={16} />{when}</li>
   {duration && <li class="chip"><Icon name="clock" size={16} />{duration}</li>}
   {e.meeting_point && <li class="chip"><Icon name="pin" size={16} />{e.meeting_point}</li>}
-  {e.level && <li class="chip"><Icon name="gauge" size={16} />{EVENT_LEVEL[e.level]}</li>}
+  {e.level && e.level !== 'all' && <li class="chip"><Icon name="gauge" size={16} />{EVENT_LEVEL[e.level]}</li>}
   {full && e.distance_km && <li class="chip"><Icon name="route" size={16} />{e.distance_km} ק״מ</li>}
   {full && e.price && <li class="chip"><Icon name="ticket" size={16} />{e.price}</li>}
   {full && e.spots_left != null && <li class="chip spots"><Icon name="users" size={16} />{UI.spotsLeft(e.spots_left)}</li>}

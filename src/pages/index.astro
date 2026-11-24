@@ -5,7 +5,6 @@ import StatsGrid from '../components/StatsGrid.astro';
 import PostCard from '../components/PostCard.astro';
 import SocialFeed from '../components/SocialFeed.astro';
 import WhatsAppCTA from '../components/WhatsAppCTA.astro';
-import Countdown from '../components/Countdown.astro';
 import AddToCalendar from '../components/AddToCalendar.astro';
 import EventMeta from '../components/EventMeta.astro';
 import {
@@ -25,7 +24,9 @@ const [page, ride, posts, categories, gallery] = await Promise.all([
 const lead = posts.find((p) => p.image) ?? posts[0];
 const side = posts.filter((p) => p !== lead).slice(0, 3);
 const [wide, ...grid] = gallery;
-const marquee = page.marquee ?? [];
+// Repeat the phrases so one loop is wider than any screen, whatever the CMS gives.
+const phrases = page.marquee ?? [];
+const marquee = phrases.length ? Array.from({ length: Math.ceil(8 / phrases.length) }, () => phrases).flat() : [];
 ---
 <Layout description={page.hero_text}>
   <!-- HERO -->
@@ -62,7 +63,6 @@ const marquee = page.marquee ?? [];
           <h2 id="ride-title" class="ride-title"><a href={withBase(`/events/${ride.slug}/`)}>{ride.title}</a></h2>
           <EventMeta event={ride} />
           <div class="ride-foot">
-            <Countdown start={ride.start} />
             <div class="cluster" style="--cluster:10px">
               {ride.registration_url && <a href={ride.registration_url} target="_blank" rel="noopener" class="btn btn-primary">{UI.register}</a>}
               <AddToCalendar event={ride} variant="soft" />
@@ -117,7 +117,6 @@ const marquee = page.marquee ?? [];
     <section class="container section" aria-labelledby="gallery-title">
       <div class="section-head">
         <h2 id="gallery-title" class="h2">{page.gallery_title}</h2>
-        <a href={withBase('/events/#past')} class="link-arrow">לכל הגלריות</a>
       </div>
       <figure class="g-wide reveal"><img src={assetUrl(wide.image, { width: 1600 })} alt={wide.image.description ?? ''} width="2000" height="600" loading="lazy" /></figure>
       <div class="g-grid" tabindex="0" aria-label="גלריית תמונות – גללו לצדדים">
@@ -159,7 +158,7 @@ const marquee = page.marquee ?? [];
   .ride-wrap { margin-top: -130px; position: relative; }
   .ride {
     background: var(--white); border-radius: var(--r-lg); box-shadow: var(--shadow-card);
-    display: flex; flex-wrap: wrap; overflow: hidden;
+    display: flex; flex-wrap: wrap;
   }
   .ride-body { flex: 1 1 520px; min-width: 0; padding: clamp(28px, 4vw, 44px) clamp(22px, 4vw, 48px); display: flex; flex-direction: column; gap: 20px; }
   .ride-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; }
@@ -169,7 +168,10 @@ const marquee = page.marquee ?? [];
   .ride-title a { color: inherit; text-decoration: none; }
   .ride-title a:hover { color: var(--purple); }
   .ride-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; margin-top: 8px; }
-  .ride-art { flex: 1 1 380px; min-width: 0; min-height: 300px; background: var(--ink); position: relative; }
+  .ride-art {
+    flex: 1 1 380px; min-width: 0; min-height: 300px; background: var(--ink); position: relative; overflow: hidden;
+    border-start-end-radius: var(--r-lg); border-end-end-radius: var(--r-lg);
+  }
   .ride-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
   /* ---------- Activity ---------- */
@@ -210,7 +212,7 @@ const marquee = page.marquee ?? [];
     .hero-actions .btn { flex: 1 1 100%; }
     .hero-art img { max-width: 440px; }
     .ride-wrap { margin-top: -96px; }
-    .ride-art { order: -1; min-height: 200px; flex-basis: 100%; }
+    .ride-art { order: -1; min-height: 200px; flex-basis: 100%; border-radius: var(--r-lg) var(--r-lg) 0 0; }
     .ride-foot { flex-direction: column; align-items: stretch; }
     .ride-foot .cluster > :global(*) { flex: 1 1 auto; }
     .ride-foot :global(.btn) { width: 100%; }

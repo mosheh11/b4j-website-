@@ -48,4 +48,12 @@ const site = Astro.site?.href ?? 'https://bikes4jlm.org';
     color: var(--ink); text-decoration: none; font-weight: 500; font-size: var(--fs-small);
   }
   .menu a:hover { background: var(--sand); }
+  /* Phones: expand inline under the button (full width) instead of floating,
+     so it can't be covered by the sticky WhatsApp bar or run off-screen. */
+  @media (max-width: 760px) {
+    .atc { display: block; }
+    .atc summary { width: 100%; }
+    .menu { position: static; margin-top: 8px; min-width: 0; box-shadow: none; }
+    .menu a { min-height: 48px; justify-content: center; }
+  }
 </style>
