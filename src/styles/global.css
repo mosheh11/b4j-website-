@@ -218,8 +218,3 @@ a.card:hover { color: var(--ink); }
 }
 /* No-JS: never hide content */
 .no-js .reveal { opacity: 1; transform: none; }
-
-/* Space for the sticky mobile WhatsApp bar */
-@media (max-width: 760px) {
-  body.has-sticky-cta { padding-bottom: 84px; }
-}

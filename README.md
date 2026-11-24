@@ -40,7 +40,7 @@ src/
   lib/calendar.ts     .ics generation and Google Calendar links
   mock/*.json         mock CMS content, shaped like Directus responses (with translations)
   layouts/Layout.astro
-  components/         Header, Footer, StickyWhatsApp, PageBanner, PostCard, StatsGrid, …
+  components/         Header, Footer, PageBanner, PostCard, StatsGrid, …
   pages/
   styles/global.css   design tokens + shared classes
 public/images/        photos, logos, QR
@@ -76,7 +76,7 @@ From the "Polished palette" homepage and the brand book:
 | `--night` | `#15111A` | footer |
 
 Font: Google Sans (400/500/700), Heebo fallback. Rounded cards (24–32px), pill buttons, 60/30/10 color balance.
-Mobile: single column, hamburger menu, sticky "join on WhatsApp" bar, swipe gallery, ≥44px touch targets. Motion respects `prefers-reduced-motion`.
+Mobile: single column, hamburger menu, swipe gallery, ≥44px touch targets. Motion respects `prefers-reduced-motion`.
 
 ## Deploy
 
