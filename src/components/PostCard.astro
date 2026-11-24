@@ -1,0 +1,66 @@
+---
+/**
+ * Post card. Variants:
+ *  - "feature": big image on top (homepage lead article)
+ *  - "row":     thumbnail beside text (homepage side list, updates feed)
+ *  - "compact": text only (home "latest updates" list)
+ */
+import type { Post, PostCategory } from '../lib/cms';
+import { assetUrl, withBase } from '../lib/cms';
+import { UI, formatShortDate } from '../lib/labels';
+
+interface Props { post: Post; categories: PostCategory[]; variant?: 'feature' | 'row' | 'compact'; headingLevel?: 'h2' | 'h3' }
+const { post, categories, variant = 'row', headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const cat = categories.find((c) => c.id === post.category);
+const href = withBase(`/updates/${post.slug}/`);
+const meta = [post.author, formatShortDate(post.date_published), post.reading_minutes && UI.minutesRead(post.reading_minutes)].filter(Boolean).join(' · ');
+const fills = ['#ECE7F8', '#F1EBE1', '#E8DFD0'];
+const fill = fills[post.id % fills.length];
+---
+<a href={href} class:list={['card lift post', variant]} data-category={post.category}>
+  {variant !== 'compact' && (
+    <div class="thumb" style={`background:${fill}`}>
+      {post.image && <img src={assetUrl(post.image, { width: variant === 'feature' ? 1200 : 400 })} alt={post.image.description ?? ''} loading="lazy" width="600" height="400" />}
+    </div>
+  )}
+  <div class="body">
+    {cat && <span class:list={[variant === 'feature' ? 'tag' : 'tag-text']}>{cat.name}</span>}
+    <H class="title">{post.title}</H>
+    {variant !== 'compact' && post.excerpt && <p class="excerpt">{post.excerpt}</p>}
+    <span class="meta">{meta}</span>
+  </div>
+</a>
+
+<style>
+  .post { display: flex; color: var(--ink); }
+  .body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .title { font-size: 1.25rem; line-height: 1.3; }
+  .excerpt { font-size: var(--fs-body); line-height: 1.65; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .meta { font-size: 0.8125rem; color: var(--muted); margin-top: auto; }
+  .thumb { overflow: hidden; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
+  .post:hover .thumb img { transform: scale(1.04); }
+
+  .feature { flex-direction: column; }
+  .feature .thumb { height: clamp(200px, 26vw, 300px); }
+  .feature .body { padding: 28px 30px 30px; gap: 12px; }
+  .feature .title { font-size: var(--fs-h3); letter-spacing: -0.02em; line-height: 1.25; }
+
+  .row { gap: 18px; padding: 18px; align-items: stretch; }
+  .row .thumb { flex: none; width: 130px; min-height: 120px; border-radius: var(--r-sm); }
+  .row .body { justify-content: center; }
+  .row .excerpt { -webkit-line-clamp: 2; font-size: var(--fs-small); }
+
+  .compact { padding: 20px 22px; }
+  .compact .title { font-size: 1.0625rem; }
+
+  @media (max-width: 520px) {
+    .row { padding: 14px; gap: 14px; }
+    .row .thumb { width: 96px; min-height: 96px; }
+    .row .title { font-size: 1.0625rem; }
+    .row .excerpt { display: none; }
+    .feature .body { padding: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .post:hover .thumb img { transform: none; } }
+</style>

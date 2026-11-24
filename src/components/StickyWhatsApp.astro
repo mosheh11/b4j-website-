@@ -1,0 +1,37 @@
+---
+/** Mobile-only sticky bar: "הצטרפו בוואטסאפ" → the general community group. */
+import Icon from './Icon.astro';
+import { getGroupsSplit } from '../lib/cms';
+import { UI } from '../lib/labels';
+const { community } = await getGroupsSplit();
+---
+{community && (
+  <div class="sticky-wa" data-sticky-wa>
+    <a href={community.invite_url} target="_blank" rel="noopener" class="btn btn-whatsapp btn-lg btn-block">
+      <Icon name="whatsapp" size={22} />
+      <span>{UI.joinWhatsapp}</span>
+    </a>
+  </div>
+)}
+
+<script>
+  // Hide while the footer is on screen so it never covers footer links.
+  const bar = document.querySelector<HTMLElement>('[data-sticky-wa]');
+  const footer = document.querySelector('footer');
+  if (bar && footer && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => bar.classList.toggle('is-hidden', e.isIntersecting), { rootMargin: '0px 0px -40px 0px' }).observe(footer);
+  }
+</script>
+
+<style>
+  .sticky-wa { display: none; }
+  @media (max-width: 760px) {
+    .sticky-wa {
+      display: block; position: fixed; inset-inline: 0; bottom: 0; z-index: 40;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, rgba(255,255,255,.96) 60%, rgba(255,255,255,0));
+      transition: transform .3s var(--ease), opacity .3s;
+    }
+    .sticky-wa.is-hidden { transform: translateY(110%); opacity: 0; pointer-events: none; }
+  }
+</style>

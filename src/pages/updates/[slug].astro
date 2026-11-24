@@ -1,0 +1,205 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import FeedCard from '../../components/updates/FeedCard.astro';
+import { getPosts, getPostCategories, assetUrl, withBase, type Post } from '../../lib/cms';
+import { UI, formatDate } from '../../lib/labels';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+interface Props { post: Post }
+const { post } = Astro.props;
+const [posts, categories] = await Promise.all([getPosts(), getPostCategories()]);
+const cat = categories.find((c) => c.id === post.category);
+
+const words = post.body.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+const minutes = post.reading_minutes ?? Math.max(1, Math.round(words / 200));
+
+// Related: same category first (newest first), then the rest, never this post.
+const others = posts.filter((p) => p.id !== post.id);
+const related = [
+  ...others.filter((p) => p.category === post.category),
+  ...others.filter((p) => p.category !== post.category),
+].slice(0, 3);
+
+const pageUrl = new URL(withBase(`/updates/${post.slug}/`), Astro.site).href;
+const shareText = `${post.title} ${pageUrl}`;
+const whatsappShare = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+const facebookShare = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
+// Many posts open with the excerpt as their first paragraph — don't print it twice.
+const plain = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+const showLead = !!post.excerpt && !plain(post.body).startsWith(plain(post.excerpt).slice(0, 60));
+const heroSrc = post.image?.id ? assetUrl(post.image, { width: 1600 }) : '';
+---
+<Layout title={post.title} description={post.excerpt} image={heroSrc ? assetUrl(post.image, { width: 1200 }) : undefined}>
+  <article class="post" aria-labelledby="post-title">
+    <header class:list={['post-head', { 'has-hero': !!heroSrc }]}>
+      <div class="container narrow">
+        <a href={withBase('/updates/')} class="back"><Icon name="arrowRight" size={18} stroke={2} />חזרה לעדכונים</a>
+        <div class="head-copy rise">
+          {cat && <a href={withBase(`/updates/?category=${cat.id}`)} class="tag cat-tag">{cat.name}</a>}
+          <h1 id="post-title" class="h1 title">{post.title}</h1>
+          {showLead && <p class="lead">{post.excerpt}</p>}
+          <ul role="list" class="meta">
+            {post.author && (
+              <li class="author">
+                <span class="avatar" aria-hidden="true"><Icon name="bike" size={18} /></span>{post.author}
+              </li>
+            )}
+            <li><Icon name="calendar" size={18} /><time datetime={post.date_published}>{formatDate(post.date_published)}</time></li>
+            <li><Icon name="clock" size={18} />{UI.minutesRead(minutes)}</li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    {heroSrc && (
+      <div class="container hero-wrap">
+        <figure class="hero rise-2">
+          <img src={heroSrc} alt={post.image?.description ?? ''} width="1600" height="900" fetchpriority="high" />
+        </figure>
+      </div>
+    )}
+
+    <div class="container narrow body-wrap">
+      <div class="prose body" set:html={post.body} />
+
+      <footer class="share" aria-labelledby="share-title">
+        <h2 id="share-title" class="share-title">שתפו את העדכון</h2>
+        <div class="share-actions">
+          <a href={whatsappShare} target="_blank" rel="noopener" class="sbtn sbtn-wa">
+            <Icon name="whatsapp" size={20} />וואטסאפ<span class="visually-hidden"> (נפתח בחלון חדש)</span>
+          </a>
+          <a href={facebookShare} target="_blank" rel="noopener" class="sbtn">
+            <Icon name="facebook" size={20} />פייסבוק<span class="visually-hidden"> (נפתח בחלון חדש)</span>
+          </a>
+          <button type="button" class="sbtn" data-copy={pageUrl} hidden>
+            <Icon name="check" size={20} class="i-done" /><svg class="i-link" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4L12 5.6"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4L12 18.4"/></svg>
+            <span data-copy-label>העתקת קישור</span>
+          </button>
+          <span class="visually-hidden" aria-live="polite" data-copy-status></span>
+        </div>
+      </footer>
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <section class="more" aria-labelledby="more-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="more-title" class="h2">עוד עדכונים</h2>
+          <a href={withBase('/updates/')} class="link-arrow">{UI.allUpdates}</a>
+        </div>
+        <ul role="list" class="more-grid">
+          {related.map((p) => <li class="reveal"><FeedCard post={p} categories={categories} headingLevel="h3" /></li>)}
+        </ul>
+      </div>
+    </section>
+  )}
+</Layout>
+
+<style>
+  .narrow { max-width: calc(780px + var(--gutter) * 2); }
+
+  /* ---------- Head ---------- */
+  .post-head { background: var(--stone); padding: clamp(8px, 2vw, 24px) 0 clamp(48px, 6vw, 80px); }
+  .post-head.has-hero { padding-bottom: clamp(120px, 14vw, 200px); }
+  .back {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
+    color: var(--ink); font-weight: 500; font-size: var(--fs-small); text-decoration: none;
+  }
+  .back:hover { color: var(--purple); }
+  .back :global(svg) { transition: transform .2s var(--ease); }
+  .back:hover :global(svg) { transform: translateX(3px); }
+  .head-copy { display: flex; flex-direction: column; gap: 18px; margin-top: clamp(12px, 2vw, 24px); }
+  .cat-tag { text-decoration: none; min-height: 32px; }
+  .cat-tag:hover { color: var(--white); background: var(--purple-700); }
+  .title { font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem); line-height: 1.1; }
+  .head-copy .lead { max-width: none; }
+  .meta { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: var(--fs-small); color: var(--muted); margin-top: 4px; }
+  .meta li { display: inline-flex; align-items: center; gap: 8px; }
+  .meta :global(svg) { color: var(--muted); }
+  .author { color: var(--ink); font-weight: 500; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--purple); }
+  .avatar :global(svg) { color: var(--white) !important; }
+
+  /* ---------- Hero ---------- */
+  .hero-wrap { max-width: calc(1080px + var(--gutter) * 2); margin-top: calc(clamp(120px, 14vw, 200px) * -1 + 24px); }
+  .hero { margin: 0; border-radius: var(--r-xl); overflow: hidden; background: var(--purple-100); box-shadow: var(--shadow-card); }
+  .hero img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+
+  /* ---------- Body ---------- */
+  .body-wrap { padding-top: clamp(40px, 5vw, 64px); }
+  .body { max-width: none; font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem); }
+  .body :global(> p:first-child) { font-size: 1.15em; color: var(--ink); }
+  .body :global(h2) { scroll-margin-top: calc(var(--header-h) + 16px); }
+  .body :global(blockquote) { margin-block: 1.6em; position: relative; padding-inline-start: 28px; border-inline-start: 4px solid var(--purple); border-radius: var(--r-sm); }
+  .body :global(li::marker) { color: var(--purple); font-weight: 700; }
+  .body :global(a) { text-decoration: underline; text-decoration-thickness: 1.5px; }
+
+  /* ---------- Share ---------- */
+  .share {
+    margin-top: clamp(40px, 5vw, 56px); padding-top: 28px; border-top: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px;
+  }
+  .share-title { font-size: 1.125rem; }
+  .share-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .sbtn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 0 20px; border-radius: var(--r-pill);
+    background: var(--sand); color: var(--ink); border: 1.5px solid transparent;
+    font-weight: 500; font-size: var(--fs-small); text-decoration: none; cursor: pointer;
+    transition: background-color .2s, color .2s, transform .2s var(--ease);
+  }
+  .sbtn[hidden] { display: none; }
+  .sbtn:hover { background: var(--sand-2); color: var(--ink); transform: translateY(-2px); }
+  .sbtn-wa { background: var(--green-700); color: var(--white); }
+  .sbtn-wa:hover { background: #186650; color: var(--white); }
+  .sbtn :global(.i-done) { display: none; }
+  .sbtn.is-done { background: var(--green-50); color: var(--green-700); }
+  .sbtn.is-done :global(.i-done) { display: block; }
+  .sbtn.is-done .i-link { display: none; }
+
+  /* ---------- More ---------- */
+  .more { margin-top: var(--section-gap); padding-block: var(--section-gap); background: var(--stone); }
+  .more-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .more-grid > li { min-width: 0; }
+
+  @media (max-width: 1080px) { .more-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .more-grid > li:nth-child(3) { display: none; } }
+  @media (max-width: 599px) {
+    .hero { border-radius: var(--r-md); }
+    .hero img { aspect-ratio: 4 / 3; }
+    .meta { gap: 8px 16px; }
+    .meta .author { flex-basis: 100%; }
+    .share { flex-direction: column; align-items: stretch; }
+    .share-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .share-actions [data-copy] { grid-column: 1 / -1; }
+    .more-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .more-grid > li:nth-child(3) { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sbtn:hover, .back:hover :global(svg) { transform: none; } }
+</style>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-copy]');
+  const status = document.querySelector<HTMLElement>('[data-copy-status]');
+  const label = btn?.querySelector<HTMLElement>('[data-copy-label]');
+  if (btn && label && status && navigator.clipboard) {
+    btn.hidden = false;
+    const original = label.textContent;
+    let t: ReturnType<typeof setTimeout>;
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy || location.href);
+        btn.classList.add('is-done');
+        label.textContent = 'הקישור הועתק';
+        status.textContent = 'הקישור הועתק ללוח';
+        clearTimeout(t);
+        t = setTimeout(() => { btn.classList.remove('is-done'); label.textContent = original; status.textContent = ''; }, 2400);
+      } catch { /* clipboard blocked – leave the button as is */ }
+    });
+  }
+</script>

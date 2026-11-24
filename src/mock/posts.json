@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1, "slug": "activists-conference-2026", "status": "published", "date_published": "2026-11-12", "category": "community",
+    "author": "דובר אב״י", "reading_minutes": 5,
+    "image": { "id": "/images/gallery-families.jpg", "description": "ילדים והורים רוכבים יחד ברחוב סגור לתנועה" },
+    "translations": [{ "languages_code": "he",
+      "title": "כנס פעילים 2026",
+      "excerpt": "תמיד חלמתם לקחת חלק בארגון? יש שביל שאתם מפנטזים עליו ורק מחכים לצעוק את זה החוצה? סתם מחפשים להכיר חברים חדשים או להתנדב בארגון הכי חמוד בעיר? היום הזה הוא בשבילכם!",
+      "body": "<p>תמיד חלמתם לקחת חלק בארגון? יש שביל שאתם מפנטזים עליו ורק מחכים לצעוק את זה החוצה? סתם מחפשים להכיר חברים חדשים או להתנדב בארגון הכי חמוד בעיר? היום הזה הוא בשבילכם!</p><h2>מה היה בכנס</h2><p>יותר משמונים פעילים ופעילות התכנסו לערב של רעיונות. הצגנו את תוכנית העבודה לשנה הבאה, פתחנו שני צוותים חדשים וחילקנו משימות.</p><h2>איך מצטרפים</h2><p>כל מי שרוצה להשתלב מוזמן להצטרף לקבוצת הפעילים בוואטסאפ, או לבוא לערב המתנדבים הקרוב.</p><blockquote>״העיר משתנה כשאנחנו מגיעים – ביחד.״</blockquote>"
+    }]
+  },
+  {
+    "id": 2, "slug": "road-guardians-meeting", "status": "published", "date_published": "2026-11-18", "category": "field_reports",
+    "author": "צוות תשתיות ושטח", "reading_minutes": 3,
+    "image": { "id": "/images/gallery-flags.jpg", "description": "שיירת רוכבים ברחוב" },
+    "translations": [{ "languages_code": "he",
+      "title": "מפגש מיזם רוכבים־שומרי דרך – היום בערב!",
+      "excerpt": "מתנדבים שמדווחים על מפגעים בשבילים נפגשים לתיאום – וכל מי שרוכב קבוע באותו מקטע מוזמן.",
+      "body": "<p>מיזם שומרי הדרך מחבר רוכבים קבועים לכל מקטע בשביל. אתם רוכבים שם בכל מקרה – למה לא לדווח?</p><p>במפגש נסביר איך מדווחים, למי, ומה קורה עם הדיווח אחרי שנשלח.</p>"
+    }]
+  },
+  {
+    "id": 3, "slug": "ride-with-her", "status": "published", "date_published": "2026-11-09", "category": "community",
+    "author": "צוות קהילה וקבוצות", "reading_minutes": 4,
+    "image": { "id": "/images/gallery-purple-helmet.jpg", "description": "רוכבת עם קסדה סגולה" },
+    "translations": [{ "languages_code": "he",
+      "title": "מיזם ׳מישהי לרכב איתה׳ יוצא לדרך!",
+      "excerpt": "רוכבות ותיקות מלוות רוכבות חדשות בצעדים הראשונים בעיר – בקצב שלהן ובמסלול שלהן.",
+      "body": "<p>הרבה נשים מספרות לנו שהן רוצות לרכוב אבל לא בטוחות מאיפה להתחיל. המיזם החדש מצמיד לכל רוכבת חדשה רוכבת ותיקה לשלוש רכיבות ראשונות.</p>"
+    }]
+  },
+  {
+    "id": 4, "slug": "hybrid-bike-buying-guide", "status": "published", "date_published": "2026-11-02", "category": "tips",
+    "author": "צוות רכיבות והדרכה", "reading_minutes": 2,
+    "image": { "id": "/images/gallery-windmill.jpg", "description": "משפחה עם אופניים ליד טחנת הרוח" },
+    "translations": [{ "languages_code": "he",
+      "title": "מדריך רכישה לאופניים היברידיים",
+      "excerpt": "על מה מסתכלים, כמה זה עולה ולמה ירושלים צריכה הילוכים – כל מה שצריך לדעת לפני הקנייה.",
+      "body": "<h2>שלושה דברים לבדוק</h2><ul><li>מידת שלדה שמתאימה לגובה שלכם</li><li>טווח הילוכים רחב – בירושלים יש עליות</li><li>בלמי דיסק לימי גשם</li></ul><p>ובקבוצת הרכישה של העמותה אפשר לחסוך לא מעט.</p>"
+    }]
+  },
+  {
+    "id": 5, "slug": "november-ride-summary", "status": "published", "date_published": "2026-11-21", "category": "event_summaries",
+    "author": "צוות מדיה", "reading_minutes": 3,
+    "image": { "id": "/images/gallery-flags.jpg", "description": "שיירת רוכבים ברחוב עם דגלים" },
+    "translations": [{ "languages_code": "he",
+      "title": "סיכום רכיבת נובמבר: 340 רוכבים, דיג׳יי אחד ופיצה לכולם",
+      "excerpt": "בוקר שישי שטוף שמש, מסלול חדש דרך עמק המצלבה ושיא השתתפות חדש לרכיבה חודשית.",
+      "body": "<p>תודה לכל מי שהגיע! המסלול החדש עבר דרך עמק המצלבה, והתגובות היו מצוינות. התמונות כבר בגלריה.</p>"
+    }]
+  },
+  {
+    "id": 6, "slug": "railway-park-works", "status": "published", "date_published": "2026-11-22", "category": "route_updates",
+    "author": "צוות תשתיות ושטח", "reading_minutes": 1,
+    "image": null,
+    "translations": [{ "languages_code": "he",
+      "title": "עבודות בפארק המסילה: המקטע בבית צפפה סגור עד סוף החודש",
+      "excerpt": "עקיפה מסומנת דרך רחוב דב יוסף. שימו לב לשילוט ורכבו בזהירות ליד העבודות.",
+      "body": "<p>העירייה מבצעת עבודות תשתית במקטע הדרומי של פארק המסילה. העקיפה מסומנת ועוברת ברחוב דב יוסף.</p>"
+    }]
+  },
+  {
+    "id": 7, "slug": "winter-riding-tips", "status": "published", "date_published": "2026-10-28", "category": "tips",
+    "author": "צוות רכיבות והדרכה", "reading_minutes": 4,
+    "image": { "id": "/images/gallery-families.jpg", "description": "ילדים והורים רוכבים יחד" },
+    "translations": [{ "languages_code": "he",
+      "title": "רכיבה בחורף הירושלמי: אורות, שכבות ובלימה על רטוב",
+      "excerpt": "מחשיך מוקדם וקר בבוקר – חמישה טיפים שיעזרו להמשיך לרכוב כל החורף.",
+      "body": "<ol><li>אור קדמי לבן ואחורי אדום – גם ביום מעונן</li><li>שכבות דקות במקום מעיל אחד עבה</li><li>בולמים מוקדם יותר על אספלט רטוב</li><li>כפפות – הידיים מתקררות ראשונות</li><li>מנקים את השרשרת אחרי גשם</li></ol>"
+    }]
+  },
+  {
+    "id": 8, "slug": "ein-lavan-segment-report", "status": "published", "date_published": "2026-10-20", "category": "field_reports",
+    "author": "שומרי הדרך – מקטע עין לבן", "reading_minutes": 2,
+    "image": { "id": "/images/hero-bg.jpg", "description": "אופניים חונים ליד ספסל בשביל ירוק" },
+    "translations": [{ "languages_code": "he",
+      "title": "דיווח מהשטח: מקטע עין לבן אחרי הגשם הראשון",
+      "excerpt": "חצץ על השביל בירידה לעין לבן ושלולית גדולה מתחת לגשר. דווח לעירייה – בינתיים, האטו.",
+      "body": "<p>אחרי הגשם הראשון נשטף חצץ לירידה לעין לבן. הדיווח הועבר לעירייה. עד הניקוי – האטו בירידה.</p>"
+    }]
+  },
+  {
+    "id": 9, "slug": "new-municipal-bike-lanes", "status": "published", "date_published": "2026-10-12", "category": "community",
+    "author": "צוות דוברות", "reading_minutes": 3,
+    "image": { "id": "/images/gallery-flags.jpg", "description": "שיירת רוכבים ברחוב" },
+    "translations": [{ "languages_code": "he",
+      "title": "העירייה אישרה 6 ק״מ שבילים חדשים במרכז העיר",
+      "excerpt": "אחרי שנה של עבודה מול הוועדה – שבילים מוגנים ברחובות עזה, רמב״ן וקרן היסוד.",
+      "body": "<p>זה קרה בזכותכם: מאות פניות, השתתפות בדיונים ורכיבות מחאה. עכשיו מחכים לביצוע – ואנחנו נמשיך לעקוב.</p>"
+    }]
+  },
+  {
+    "id": 10, "slug": "first-aid-on-the-trail", "status": "published", "date_published": "2026-09-30", "category": "tips",
+    "author": "צוות רכיבות והדרכה", "reading_minutes": 5,
+    "image": null,
+    "translations": [{ "languages_code": "he",
+      "title": "עזרה ראשונה בשביל: מה צריך להיות בתיק",
+      "excerpt": "רשימה קצרה של מה לקחת, ושלושה דברים לעשות אם מישהו נופל לידכם.",
+      "body": "<p>תחבושת, פלסטרים, מגבון אלכוהול, פנימית ומשאבה – זה כל מה שצריך. ואם מישהו נופל: עוצרים בצד, בודקים הכרה, מתקשרים 101 במקרה הצורך.</p>"
+    }]
+  }
+]

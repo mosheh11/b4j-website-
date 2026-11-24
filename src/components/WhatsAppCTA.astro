@@ -1,0 +1,64 @@
+---
+/** Lilac invite band: "באב״י הכל קורה בוואטסאפ" + group chips + QR (homepage design). */
+import Icon from './Icon.astro';
+import { getGroupsSplit, withBase } from '../lib/cms';
+import { UI } from '../lib/labels';
+
+interface Props { title: string; text?: string; maxChips?: number }
+const { title, text, maxChips = 6 } = Astro.props;
+const { community, topics } = await getGroupsSplit();
+---
+<div class="wa-cta">
+  <svg class="rings" viewBox="0 0 400 400" aria-hidden="true">
+    <circle cx="200" cy="200" r="180" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 12" />
+    <circle cx="200" cy="200" r="130" fill="none" stroke="currentColor" stroke-width="2" />
+    <circle cx="200" cy="200" r="80" fill="none" stroke="currentColor" stroke-width="2" />
+  </svg>
+  <div class="copy">
+    <h2 class="title">{title}</h2>
+    {text && <p class="text">{text}</p>}
+    <ul role="list" class="chips">
+      {topics.slice(0, maxChips).map((g) => <li><a href={g.invite_url} target="_blank" rel="noopener">{g.name}</a></li>)}
+      <li><a href={withBase('/join/#groups')} class="more">כל הקבוצות ←</a></li>
+    </ul>
+    {community && (
+      <a href={community.invite_url} target="_blank" rel="noopener" class="btn btn-whatsapp btn-lg join">
+        <Icon name="whatsapp" size={22} />{UI.joinWhatsapp}
+      </a>
+    )}
+  </div>
+  {community && (
+    <figure class="qr">
+      <img src={withBase('/images/qr-updates.svg')} alt="קוד QR להצטרפות לקבוצת הוואטסאפ של הקהילה" width="168" height="168" loading="lazy" />
+      <figcaption>סרקו להצטרפות</figcaption>
+    </figure>
+  )}
+</div>
+
+<style>
+  .wa-cta {
+    position: relative; overflow: hidden; isolation: isolate;
+    background: var(--lilac); border-radius: var(--r-xl); padding: clamp(36px, 5vw, 64px) clamp(24px, 4.5vw, 56px);
+    display: flex; flex-wrap: wrap; gap: 40px; align-items: center; justify-content: space-between;
+  }
+  .rings { position: absolute; inset-inline-end: -80px; top: -80px; width: 420px; height: 420px; color: var(--purple); opacity: .18; z-index: -1; }
+  .copy { flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .title { font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem); line-height: 1.08; letter-spacing: -0.03em; }
+  .text { font-size: 1.1875rem; line-height: 1.7; color: var(--slate); max-width: 520px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips a {
+    display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: var(--r-pill);
+    background: var(--white); border: 1px solid var(--lilac-line); color: var(--ink); font-size: var(--fs-label);
+    text-decoration: none; transition: border-color .2s, background-color .2s;
+  }
+  .chips a:hover { border-color: var(--ink); }
+  .chips .more { background: transparent; border-color: transparent; color: var(--purple); font-weight: 500; }
+  .join { align-self: flex-start; margin-top: 8px; }
+  .qr { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .qr img { width: 168px; height: 168px; background: var(--white); border-radius: 20px; padding: 12px; box-shadow: 0 12px 30px rgba(84, 52, 201, 0.14); }
+  .qr figcaption { font-size: var(--fs-small); font-weight: 700; color: var(--muted); }
+  @media (max-width: 760px) {
+    .qr { display: none; } /* on a phone you tap, you don't scan */
+    .join { align-self: stretch; }
+  }
+</style>

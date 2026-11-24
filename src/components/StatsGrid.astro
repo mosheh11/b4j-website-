@@ -1,0 +1,27 @@
+---
+/** 2×2 headline numbers with hairline dividers (homepage design). */
+import { getStats } from '../lib/cms';
+interface Props { columns?: 2 | 4; class?: string }
+const { columns = 2, class: cls } = Astro.props;
+const stats = await getStats();
+---
+<dl class:list={['stats', `cols-${columns}`, cls]}>
+  {stats.map((s) => (
+    <div class="stat">
+      <dt>{s.label}</dt>
+      <dd>{s.value}</dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .stats {
+    margin: 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line);
+    border-radius: var(--r-md); overflow: hidden; grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .stat { background: var(--white); padding: clamp(22px, 3vw, 32px) clamp(18px, 2.4vw, 28px); display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 6px; }
+  dd { margin: 0; font-size: clamp(2.5rem, 1.8rem + 2.4vw, 3.5rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: var(--purple); }
+  dt { font-size: var(--fs-small); color: var(--muted); line-height: 1.4; }
+  @media (max-width: 860px) { .cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>

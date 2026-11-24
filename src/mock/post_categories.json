@@ -1,0 +1,7 @@
+[
+  { "id": "field_reports", "sort": 1, "translations": [{ "languages_code": "he", "name": "עמדות מהשטח" }] },
+  { "id": "event_summaries", "sort": 2, "translations": [{ "languages_code": "he", "name": "סיכומי אירועים" }] },
+  { "id": "community", "sort": 3, "translations": [{ "languages_code": "he", "name": "מידע לקהילה" }] },
+  { "id": "tips", "sort": 4, "translations": [{ "languages_code": "he", "name": "טיפים" }] },
+  { "id": "route_updates", "sort": 5, "translations": [{ "languages_code": "he", "name": "עדכוני מסלול" }] }
+]

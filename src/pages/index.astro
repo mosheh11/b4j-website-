@@ -1,0 +1,227 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import StatsGrid from '../components/StatsGrid.astro';
+import PostCard from '../components/PostCard.astro';
+import SocialFeed from '../components/SocialFeed.astro';
+import WhatsAppCTA from '../components/WhatsAppCTA.astro';
+import Countdown from '../components/Countdown.astro';
+import AddToCalendar from '../components/AddToCalendar.astro';
+import EventMeta from '../components/EventMeta.astro';
+import {
+  getPage, getNextRide, getPosts, getPostCategories, getGallery, assetUrl, withBase,
+} from '../lib/cms';
+import { UI, EVENT_TYPE } from '../lib/labels';
+
+interface HomePage {
+  hero_title: string; hero_title_highlight?: string; hero_text?: string; hero_image?: { id: string; description?: string };
+  activity_title?: string; activity_text?: string; marquee?: string[];
+  gallery_title?: string; whatsapp_title?: string; whatsapp_text?: string;
+}
+const [page, ride, posts, categories, gallery] = await Promise.all([
+  getPage<HomePage>('home'), getNextRide(), getPosts(), getPostCategories(), getGallery(),
+]);
+// Lead with the newest post that has a photo; the next three newest go beside it.
+const lead = posts.find((p) => p.image) ?? posts[0];
+const side = posts.filter((p) => p !== lead).slice(0, 3);
+const [wide, ...grid] = gallery;
+const marquee = page.marquee ?? [];
+---
+<Layout description={page.hero_text}>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy rise">
+        <h1 class="display">
+          {page.hero_title}
+          {page.hero_title_highlight && <><br /><span class="accent">{page.hero_title_highlight}</span></>}
+        </h1>
+        {page.hero_text && <p class="lead">{page.hero_text}</p>}
+        <div class="cluster hero-actions" style="--cluster:14px">
+          <a href={withBase('/join/')} class="btn btn-primary btn-lg">{UI.joinActivity}<Icon name="arrow" size={18} stroke={2.2} /></a>
+          {ride && <a href="#ride" class="btn btn-white btn-lg">לרכיבה הקרובה</a>}
+        </div>
+      </div>
+      {page.hero_image && (
+        <div class="hero-art rise-2">
+          <img src={assetUrl(page.hero_image, { width: 1400 })} alt={page.hero_image.description ?? ''} width="1950" height="1624" fetchpriority="high" />
+          <span class="hero-dot" aria-hidden="true"></span>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- NEXT RIDE -->
+  {ride && (
+    <section id="ride" class="container ride-wrap" aria-labelledby="ride-title">
+      <article class="ride">
+        <div class="ride-body">
+          <div class="ride-top">
+            <span class="eyebrow">{UI.nextEvent} · {EVENT_TYPE[ride.type]}</span>
+            <a href={withBase('/events/')} class="all-events"><Icon name="calendar" size={18} />{UI.allEvents}</a>
+          </div>
+          <h2 id="ride-title" class="ride-title"><a href={withBase(`/events/${ride.slug}/`)}>{ride.title}</a></h2>
+          <EventMeta event={ride} />
+          <div class="ride-foot">
+            <Countdown start={ride.start} />
+            <div class="cluster" style="--cluster:10px">
+              {ride.registration_url && <a href={ride.registration_url} target="_blank" rel="noopener" class="btn btn-primary">{UI.register}</a>}
+              <AddToCalendar event={ride} variant="soft" />
+            </div>
+          </div>
+        </div>
+        {ride.image && (
+          <div class="ride-art">
+            <img src={assetUrl(ride.image, { width: 900 })} alt={ride.image.description ?? ''} width="760" height="520" loading="lazy" />
+          </div>
+        )}
+      </article>
+    </section>
+  )}
+
+  <!-- ACTIVITY + STATS -->
+  <section class="container section activity">
+    <div class="activity-copy reveal">
+      <h2 class="h2">{page.activity_title}</h2>
+      {page.activity_text && <p class="lead">{page.activity_text}</p>}
+      <a href={withBase('/about/')} class="link-arrow">סקרנים לשמוע עוד?</a>
+    </div>
+    <StatsGrid class="activity-stats reveal" />
+  </section>
+
+  {marquee.length > 0 && (
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        {[0, 1].map(() => marquee.map((m) => <><span>{m}</span><span class="star">✦</span></>))}
+      </div>
+    </div>
+  )}
+
+  <!-- UPDATES -->
+  {lead && (
+    <section class="container section" aria-labelledby="updates-title">
+      <div class="section-head">
+        <h2 id="updates-title" class="h2">כתבות ועדכונים</h2>
+        <a href={withBase('/updates/')} class="link-arrow">{UI.allUpdates}</a>
+      </div>
+      <div class="updates">
+        <div class="updates-lead reveal"><PostCard post={lead} categories={categories} variant="feature" /></div>
+        <div class="updates-side">
+          {side.map((p) => <div class="reveal"><PostCard post={p} categories={categories} variant="row" /></div>)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- GALLERY -->
+  {wide && (
+    <section class="container section" aria-labelledby="gallery-title">
+      <div class="section-head">
+        <h2 id="gallery-title" class="h2">{page.gallery_title}</h2>
+        <a href={withBase('/events/#past')} class="link-arrow">לכל הגלריות</a>
+      </div>
+      <figure class="g-wide reveal"><img src={assetUrl(wide.image, { width: 1600 })} alt={wide.image.description ?? ''} width="2000" height="600" loading="lazy" /></figure>
+      <div class="g-grid" tabindex="0" aria-label="גלריית תמונות – גללו לצדדים">
+        {grid.map((g) => <figure class="reveal"><img src={assetUrl(g.image, { width: 800 })} alt={g.image.description ?? ''} width="800" height="533" loading="lazy" /></figure>)}
+      </div>
+    </section>
+  )}
+
+  <!-- WHATSAPP -->
+  <section class="container section">
+    <div class="reveal"><WhatsAppCTA title={page.whatsapp_title ?? ''} text={page.whatsapp_text} /></div>
+  </section>
+
+  <!-- SOCIAL -->
+  <section class="container section" aria-labelledby="social-title">
+    <div class="section-head">
+      <h2 id="social-title" class="h2">עקבו אחרי אב״י ברשתות</h2>
+    </div>
+    <SocialFeed />
+  </section>
+</Layout>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero { background: var(--stone); padding-bottom: 170px; overflow: hidden; }
+  .hero-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 40px 56px; padding-top: clamp(16px, 3vw, 32px); padding-bottom: clamp(32px, 6vw, 96px); }
+  .hero-copy { flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+  .hero-copy .display { max-width: 16ch; }
+  .hero-actions { margin-top: 16px; }
+  .hero-art { flex: 1 1 520px; min-width: 0; position: relative; display: flex; justify-content: center; }
+  .hero-art img { width: 100%; max-width: 640px; aspect-ratio: 1950 / 1624; }
+  .hero-dot {
+    position: absolute; inset-inline-end: 0; bottom: 6%; width: clamp(88px, 11vw, 152px); aspect-ratio: 1;
+    border-radius: 50%; background: var(--green); z-index: -1;
+  }
+  .hero-art { isolation: isolate; }
+
+  /* ---------- Next ride ---------- */
+  .ride-wrap { margin-top: -130px; position: relative; }
+  .ride {
+    background: var(--white); border-radius: var(--r-lg); box-shadow: var(--shadow-card);
+    display: flex; flex-wrap: wrap; overflow: hidden;
+  }
+  .ride-body { flex: 1 1 520px; min-width: 0; padding: clamp(28px, 4vw, 44px) clamp(22px, 4vw, 48px); display: flex; flex-direction: column; gap: 20px; }
+  .ride-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; }
+  .all-events { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); font-weight: 500; text-decoration: none; }
+  .all-events:hover { color: var(--purple); }
+  .ride-title { font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.375rem); line-height: 1.15; letter-spacing: -0.02em; max-width: 22ch; }
+  .ride-title a { color: inherit; text-decoration: none; }
+  .ride-title a:hover { color: var(--purple); }
+  .ride-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; margin-top: 8px; }
+  .ride-art { flex: 1 1 380px; min-width: 0; min-height: 300px; background: var(--ink); position: relative; }
+  .ride-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  /* ---------- Activity ---------- */
+  .activity { display: flex; flex-wrap: wrap; gap: 40px 56px; align-items: center; }
+  .activity-copy { flex: 1.4 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .activity-copy .lead { font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem); }
+  :global(.activity-stats) { flex: 1 1 360px; min-width: 0; align-self: flex-start; }
+
+  /* ---------- Marquee ---------- */
+  .marquee { overflow: hidden; margin-top: 88px; border-block: 1px solid var(--line); padding: 22px 0; }
+  .marquee-track {
+    display: flex; width: max-content; gap: 56px; font-size: clamp(1.375rem, 1rem + 1.4vw, 1.875rem); font-weight: 500;
+    letter-spacing: -0.01em; color: #A39BAA; white-space: nowrap; animation: marquee 60s linear infinite;
+  }
+  .star { color: var(--green); }
+  @keyframes marquee { to { transform: translateX(50%); } }
+  @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
+  /* ---------- Updates ---------- */
+  .updates { display: flex; flex-wrap: wrap; gap: 20px; }
+  .updates-lead { flex: 1.5 1 460px; min-width: 0; display: flex; }
+  .updates-lead > :global(*) { flex: 1; }
+  .updates-side { flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+  .updates-side > div { flex: 1; display: flex; }
+  .updates-side > div > :global(*) { flex: 1; }
+
+  /* ---------- Gallery ---------- */
+  figure { margin: 0; border-radius: var(--r-md); overflow: hidden; background: var(--purple-100); }
+  figure img { width: 100%; height: 100%; object-fit: cover; }
+  .g-wide { height: clamp(200px, 26vw, 340px); margin-bottom: 16px; }
+  .g-wide img { object-position: center 70%; }
+  .g-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); grid-auto-rows: 300px; gap: 16px; }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 760px) {
+    .hero { padding-bottom: 120px; }
+    .hero-inner { gap: 28px; }
+    .hero-actions .btn { flex: 1 1 100%; }
+    .hero-art img { max-width: 440px; }
+    .ride-wrap { margin-top: -96px; }
+    .ride-art { order: -1; min-height: 200px; flex-basis: 100%; }
+    .ride-foot { flex-direction: column; align-items: stretch; }
+    .ride-foot .cluster > :global(*) { flex: 1 1 auto; }
+    .ride-foot :global(.btn) { width: 100%; }
+    .marquee { margin-top: 64px; }
+    /* Gallery becomes a swipe carousel */
+    .g-grid {
+      display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px;
+      margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scrollbar-width: none;
+    }
+    .g-grid::-webkit-scrollbar { display: none; }
+    .g-grid figure { flex: 0 0 78%; height: 260px; scroll-snap-align: center; }
+  }
+</style>

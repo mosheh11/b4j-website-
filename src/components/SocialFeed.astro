@@ -1,0 +1,64 @@
+---
+/**
+ * Social feed (Facebook · Instagram · X). Outside the CMS contract — code-owned.
+ * Currently renders placeholder posts from src/mock/social.json; swap for real
+ * embeds (or a feed service) when chosen. Profile URLs come from site_settings.
+ */
+import Icon from './Icon.astro';
+import social from '../mock/social.json';
+import { getSiteSettings, withBase } from '../lib/cms';
+import { formatShortDate } from '../lib/labels';
+
+interface Props { layout?: 'row' | 'stack' }
+const { layout = 'row' } = Astro.props;
+const site = await getSiteSettings();
+const link = (p: string) => site.social_links.find((s) => s.platform === p);
+const ig = link('instagram'), fb = link('facebook'), x = link('x');
+---
+<div class:list={['feed', layout]}>
+  {ig && (
+    <a href={ig.url} target="_blank" rel="noopener" class="card lift item ig">
+      <div class="grid">
+        {social.instagram.map((p) => <div class="media"><img src={withBase(p.image)} alt={p.alt} loading="lazy" width="200" height="200" /></div>)}
+      </div>
+      <span class="foot"><span class="net"><Icon name="instagram" size={18} />אינסטגרם</span><span class="go" dir="auto">{ig.handle} ←</span></span>
+    </a>
+  )}
+  {fb && (
+    <a href={fb.url} target="_blank" rel="noopener" class="card lift item text">
+      <div class="posts">
+        {social.facebook.slice(0, layout === 'stack' ? 2 : 1).map((p) => (
+          <p><time>{formatShortDate(p.date)}</time>{p.text}</p>
+        ))}
+      </div>
+      <span class="foot"><span class="net"><Icon name="facebook" size={18} />פייסבוק</span><span class="go">לעמוד ←</span></span>
+    </a>
+  )}
+  {x && (
+    <a href={x.url} target="_blank" rel="noopener" class="card lift item text">
+      <div class="posts">
+        {social.x.slice(0, layout === 'stack' ? 2 : 1).map((p) => (
+          <p><time>{formatShortDate(p.date)}</time>{p.text}</p>
+        ))}
+      </div>
+      <span class="foot"><span class="net"><Icon name="x" size={18} />X</span><span class="go">לחשבון ←</span></span>
+    </a>
+  )}
+</div>
+
+<style>
+  .feed { display: flex; flex-wrap: wrap; gap: 16px; }
+  .item { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; padding: 24px; color: var(--ink); }
+  .ig { flex: 1.4 1 380px; padding: 20px; }
+  .text { flex: 1 1 280px; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .grid .media { aspect-ratio: 1; border-radius: 14px; }
+  .posts { display: flex; flex-direction: column; gap: 16px; }
+  .posts p { font-size: 1.0625rem; line-height: 1.6; color: var(--ink); }
+  .posts time { display: block; font-size: 0.8125rem; color: var(--muted); margin-bottom: 4px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-weight: 500; }
+  .net { display: inline-flex; align-items: center; gap: 8px; }
+  .go { color: var(--purple); }
+  .stack { flex-direction: column; }
+  .stack .item { flex: none; }
+</style>

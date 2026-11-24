@@ -1,0 +1,48 @@
+{
+  "teams": [
+    { "id": 1, "sort": 1, "contact_email": "media@example.org", "members": ["נועה", "איתי", "שירה"],
+      "translations": [{ "languages_code": "he", "name": "צוות מדיה", "description": "צילום, וידאו ורשתות חברתיות – מספרים את הסיפור של הקהילה." }] },
+    { "id": 2, "sort": 2, "contact_email": "press@example.org", "members": ["עקיבא", "מיכל"],
+      "translations": [{ "languages_code": "he", "name": "צוות דוברות", "description": "קשר עם התקשורת, עמדות העמותה ותגובות לאירועים בעיר." }] },
+    { "id": 3, "sort": 3, "contact_email": "rides@example.org", "members": ["יעל", "דניאל", "אורי", "תמר"],
+      "translations": [{ "languages_code": "he", "name": "צוות רכיבות והדרכה", "description": "מתכננים מסלולים, מובילים רכיבות ומלמדים רכיבה בטוחה." }] },
+    { "id": 4, "sort": 4, "contact_email": "infra@example.org", "members": ["משה", "רוני"],
+      "translations": [{ "languages_code": "he", "name": "צוות תשתיות ושטח", "description": "סימון ותחזוקת השביל, דיווחי מפגעים ועבודה מול העירייה." }] },
+    { "id": 5, "sort": 5, "contact_email": "community@example.org", "members": ["הדס", "עמית", "ליאור"],
+      "translations": [{ "languages_code": "he", "name": "צוות קהילה וקבוצות", "description": "מנהלים את קבוצות הוואטסאפ ומחברים בין רוכבים." }] },
+    { "id": 6, "sort": 6, "contact_email": "volunteers@example.org", "members": ["גלעד", "אביגיל"],
+      "translations": [{ "languages_code": "he", "name": "צוות מתנדבים", "description": "קולטים מתנדבים חדשים ומוצאים לכל אחד את המקום שלו." }] }
+  ],
+  "milestones": [
+    { "id": 1, "year": 2014, "translations": [{ "languages_code": "he", "title": "הרכיבה הקבוצתית הראשונה", "description": "שלושים רוכבים יצאו מהתחנה הראשונה – ומשם זה רק גדל." }] },
+    { "id": 2, "year": 2017, "translations": [{ "languages_code": "he", "title": "העמותה נרשמת רשמית", "description": "אופניים בשביל ירושלים הופכת לעמותה רשומה." }] },
+    { "id": 3, "year": 2020, "translations": [{ "languages_code": "he", "title": "פארק המסילה מתחבר לעין כרם", "description": "אחרי שנים של פעילות – השביל הרציף הראשון במערב העיר." }] },
+    { "id": 4, "year": 2023, "translations": [{ "languages_code": "he", "title": "1,000 רוכבים ברכיבה השנתית", "description": "הרחובות נסגרים לתנועה ונפתחים לאופניים." }] },
+    { "id": 5, "year": 2026, "translations": [{ "languages_code": "he", "title": "6 ק״מ שבילים חדשים במרכז העיר", "description": "העירייה מאשרת שבילים מוגנים ברחובות עזה, רמב״ן וקרן היסוד." }] }
+  ],
+  "stats": [
+    { "id": 1, "sort": 1, "translations": [{ "languages_code": "he", "value": "42", "label": "ק״מ של שבילים נסללו" }] },
+    { "id": 2, "sort": 2, "translations": [{ "languages_code": "he", "value": "3,500", "label": "רוכבים בקהילה" }] },
+    { "id": 3, "sort": 3, "translations": [{ "languages_code": "he", "value": "60", "label": "רכיבות קבוצתיות" }] },
+    { "id": 4, "sort": 4, "translations": [{ "languages_code": "he", "value": "120", "label": "מתנדבים פעילים בעמותה" }] }
+  ],
+  "partners": [
+    { "id": 1, "sort": 1, "url": "https://www.jerusalem.muni.il", "logo": null, "translations": [{ "languages_code": "he", "name": "עיריית ירושלים" }] },
+    { "id": 2, "sort": 2, "url": "", "logo": null, "translations": [{ "languages_code": "he", "name": "משרד התחבורה" }] },
+    { "id": 3, "sort": 3, "url": "", "logo": null, "translations": [{ "languages_code": "he", "name": "תחבורה היום ומחר" }] },
+    { "id": 4, "sort": 4, "url": "", "logo": null, "translations": [{ "languages_code": "he", "name": "קרן ירושלים" }] },
+    { "id": 5, "sort": 5, "url": "", "logo": null, "translations": [{ "languages_code": "he", "name": "המרכז הקהילתי בקעה" }] }
+  ],
+  "gallery": [
+    { "id": 1, "sort": 1, "image": { "id": "/images/gallery-old-city-wide.jpg", "description": "מאות רוכבים ורוכבות על הדשא מול חומות העיר העתיקה" } },
+    { "id": 2, "sort": 2, "image": { "id": "/images/gallery-families.jpg", "description": "ילדים והורים רוכבים יחד ברחוב סגור לתנועה" } },
+    { "id": 3, "sort": 3, "image": { "id": "/images/gallery-purple-helmet.jpg", "description": "רוכבת עם קסדה סגולה וסל ומאחוריה עשרות רוכבים" } },
+    { "id": 4, "sort": 4, "image": { "id": "/images/gallery-flags.jpg", "description": "שיירת רוכבים ברחוב עם דגלי ישראל" } },
+    { "id": 5, "sort": 5, "image": { "id": "/images/gallery-windmill.jpg", "description": "משפחה חוצה במעבר חצייה ליד טחנת הרוח" } }
+  ],
+  "legal_pages": [
+    { "id": 1, "slug": "terms", "translations": [{ "languages_code": "he", "title": "תקנון האתר", "body": "<p>[טקסט תקנון האתר יגיע מה־CMS]</p><h2>שימוש באתר</h2><p>השימוש באתר כפוף לתנאים המפורטים כאן.</p>" }] },
+    { "id": 2, "slug": "privacy", "translations": [{ "languages_code": "he", "title": "מדיניות פרטיות", "body": "<p>[טקסט מדיניות הפרטיות יגיע מה־CMS]</p><h2>איזה מידע נאסף</h2><p>האתר אינו אוסף מידע אישי מעבר לנדרש להרשמה לאירועים.</p>" }] },
+    { "id": 3, "slug": "accessibility", "translations": [{ "languages_code": "he", "title": "הצהרת נגישות", "body": "<p>[טקסט הצהרת הנגישות יגיע מה־CMS]</p><h2>מה עשינו</h2><p>האתר נבנה בהתאם להנחיות WCAG 2.1 ברמה AA: ניגודיות צבעים, ניווט במקלדת ותמיכה בקוראי מסך.</p>" }] }
+  ]
+}

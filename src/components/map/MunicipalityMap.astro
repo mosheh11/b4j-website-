@@ -1,0 +1,115 @@
+---
+/**
+ * Municipality ArcGIS map, phase 1.
+ * Desktop (≥900px): the iframe is inserted by JS only when the media query
+ * matches, so phones never download the heavy map app.
+ * Phones / no JS: a static image card + a wide button to the municipality site.
+ */
+import Icon from '../Icon.astro';
+import type { CmsImage } from '../../lib/cms';
+import { assetUrl } from '../../lib/cms';
+
+interface Props { url: string; image?: CmsImage | null; title: string }
+const { url, image, title } = Astro.props;
+const openLabel = 'לפתיחת המפה באתר העירייה';
+---
+<div class="map-card" data-map data-url={url} data-title={title}>
+  <div class="embed" data-embed></div>
+
+  <div class="fallback" data-fallback>
+    {image && (
+      <a href={url} target="_blank" rel="noopener" class="static" tabindex="-1" aria-hidden="true">
+        <img src={assetUrl(image, { width: 1200 })} alt={image.description ?? ''} width="1200" height="800" loading="lazy" />
+        <span class="pin"><Icon name="map" size={28} /></span>
+      </a>
+    )}
+    <div class="fallback-foot">
+      <p class="fallback-text">המפה האינטראקטיבית של העירייה עובדת הכי טוב במסך מלא.</p>
+      <a href={url} target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-block open">
+        {openLabel}<Icon name="arrow" size={18} stroke={2.2} />
+        <span class="visually-hidden">(נפתח בלשונית חדשה)</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="bar">
+    <span class="bar-src"><Icon name="layers" size={18} />מפה רשמית · עיריית ירושלים</span>
+    <a href={url} target="_blank" rel="noopener" class="bar-link">
+      פתיחה במסך מלא<Icon name="external" size={16} />
+      <span class="visually-hidden">(נפתח בלשונית חדשה)</span>
+    </a>
+  </div>
+</div>
+
+<script>
+  // Insert the iframe only on wide screens (same breakpoint as the CSS below).
+  const mq = matchMedia('(min-width: 900px)');
+  const load = () => {
+    if (!mq.matches) return;
+    document.querySelectorAll<HTMLElement>('[data-map]').forEach((card) => {
+      const embed = card.querySelector<HTMLElement>('[data-embed]');
+      if (!embed || embed.firstChild) return;
+      const f = document.createElement('iframe');
+      f.src = card.dataset.url!;
+      f.title = card.dataset.title!;
+      f.loading = 'lazy';
+      f.setAttribute('allow', 'geolocation; fullscreen');
+      f.setAttribute('allowfullscreen', '');
+      embed.append(f);
+    });
+  };
+  load();
+  mq.addEventListener('change', load);
+</script>
+
+<style>
+  .map-card {
+    background: var(--white); border: 1px solid var(--line); border-radius: var(--r-xl);
+    box-shadow: var(--shadow-card); overflow: hidden;
+  }
+  /* Default (phones, no JS): only the fallback card. With JS on ≥900px: only the embed. */
+  .embed, .bar { display: none; }
+  @media (min-width: 900px) {
+    :global(.js) .embed { display: block; }
+    :global(.js) .bar { display: flex; }
+    :global(.js) .fallback { display: none; }
+  }
+
+  /* Desktop embed */
+  .embed { height: 70vh; min-height: 480px; max-height: 820px; background: var(--purple-100); }
+  .embed :global(iframe) { display: block; width: 100%; height: 100%; border: 0; }
+  .bar {
+    flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px;
+    padding: 10px clamp(18px, 3vw, 28px); border-top: 1px solid var(--line);
+  }
+  .bar-src { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-small); color: var(--muted); font-weight: 500; }
+  .bar-src :global(svg) { color: var(--green); }
+  .bar-link {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-weight: 700;
+    font-size: var(--fs-small); text-decoration: none;
+  }
+
+  /* Phone / fallback card */
+  .fallback { display: flex; flex-wrap: wrap; align-items: stretch; }
+  .static { position: relative; display: block; flex: 1.4 1 420px; min-width: 0; min-height: 240px; background: var(--purple-100); }
+  .static img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pin {
+    position: absolute; inset-inline-start: 20px; bottom: 20px; display: grid; place-items: center;
+    width: 60px; height: 60px; border-radius: 50%; background: var(--white); color: var(--purple);
+    box-shadow: 0 10px 24px rgba(26, 20, 32, 0.18);
+  }
+  .fallback-foot {
+    flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 18px;
+    padding: clamp(22px, 4vw, 44px);
+  }
+  .fallback-text { font-size: 1.0625rem; line-height: 1.6; color: var(--slate); }
+  .open { white-space: normal; text-align: center; }
+
+  @media (max-width: 760px) {
+    .map-card { border-radius: var(--r-lg); }
+    .static { flex-basis: 100%; aspect-ratio: 4 / 3; min-height: 0; }
+    .fallback-foot { padding: 20px; gap: 14px; }
+    .fallback-text { font-size: var(--fs-small); color: var(--muted); }
+    .open { padding-inline: 18px; font-size: 1rem; gap: 8px; }
+  }
+</style>

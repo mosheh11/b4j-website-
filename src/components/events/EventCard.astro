@@ -1,0 +1,75 @@
+---
+/** Upcoming event card: image with date badge, type tag, title, details, actions. Optional countdown. */
+import Countdown from '../Countdown.astro';
+import EventDetails from './EventDetails.astro';
+import EventActions from './EventActions.astro';
+import type { CmsEvent } from '../../lib/cms';
+import { assetUrl, withBase } from '../../lib/cms';
+import { EVENT_TYPE, UI, dateBadge } from '../../lib/labels';
+
+/** `compact` = no summary/actions; for the "more events" strip. */
+interface Props { event: CmsEvent; countdown?: boolean; compact?: boolean; headingLevel?: 'h2' | 'h3' }
+const { event: e, countdown = false, compact = false, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const href = withBase(`/events/${e.slug}/`);
+const badge = dateBadge(e.start);
+const tagClass = e.type === 'workshop' ? 'tag tag-green' : e.type === 'other' ? 'tag tag-soft' : 'tag';
+---
+<article class:list={['card ev', { next: countdown, compact }]}>
+  <a href={href} class="thumb" tabindex="-1" aria-hidden="true">
+    {e.image && <img src={assetUrl(e.image, { width: 900 })} alt="" width="720" height="480" loading="lazy" />}
+    <span class="badge"><b>{badge.day}</b><span>{badge.month}</span></span>
+  </a>
+  <div class="body">
+    <div class="top">
+      <span class={tagClass}>{EVENT_TYPE[e.type]}</span>
+      {countdown && <span class="eyebrow">{UI.nextEvent}</span>}
+    </div>
+    <H class="title"><a href={href}>{e.title}</a></H>
+    {!compact && e.summary && <p class="summary">{e.summary}</p>}
+    <EventDetails event={e} brief={compact} />
+    {countdown && <Countdown start={e.start} class="cd" />}
+    <div class="foot">
+      {!compact && <EventActions event={e} size="sm" />}
+      <a href={href} class="link-arrow more">לפרטים המלאים<span class="visually-hidden">: {e.title}</span></a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .ev { display: flex; flex-direction: column; height: 100%; overflow: visible; transition: box-shadow .25s ease, border-color .25s; }
+  .ev:hover { box-shadow: var(--shadow-lift); border-color: var(--lilac-line); }
+  .thumb {
+    position: relative; display: block; aspect-ratio: 16 / 9; background: var(--purple-100);
+    border-radius: var(--r-md) var(--r-md) 0 0; overflow: hidden;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
+  .ev:hover .thumb img { transform: scale(1.04); }
+  .badge {
+    position: absolute; top: 14px; inset-inline-start: 14px; display: flex; flex-direction: column; align-items: center;
+    min-width: 58px; padding: 8px 10px 7px; border-radius: 16px; background: var(--white); color: var(--ink);
+    box-shadow: 0 8px 20px rgba(26, 20, 32, .14); line-height: 1;
+  }
+  .badge b { font-size: 1.5rem; letter-spacing: -0.02em; }
+  .badge span { font-size: 0.8125rem; font-weight: 500; color: var(--purple); margin-top: 4px; }
+
+  .body { flex: 1; display: flex; flex-direction: column; gap: 14px; padding: 24px clamp(20px, 2.4vw, 28px) 26px; }
+  .top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+  .title { font-size: clamp(1.25rem, 1.12rem + .5vw, 1.5rem); line-height: 1.25; letter-spacing: -0.02em; }
+  .title a { color: inherit; text-decoration: none; }
+  .title a:hover { color: var(--purple); }
+  .summary { color: var(--muted); font-size: var(--fs-small); line-height: 1.6; }
+  .foot { margin-top: auto; padding-top: 6px; display: flex; flex-direction: column; gap: 6px; }
+  .more { align-self: flex-start; }
+  .ev :global(.cd) { align-self: flex-start; }
+  .compact .body { gap: 10px; padding-block: 20px 14px; }
+  .compact .title { font-size: 1.1875rem; }
+  .compact .foot { padding-top: 0; }
+
+  @media (prefers-reduced-motion: reduce) { .ev:hover .thumb img { transform: none; } }
+  @media (max-width: 760px) {
+    .body { padding: 20px 18px 22px; }
+    .ev :global(.cd) { align-self: stretch; }
+    .ev :global(.cd .unit) { flex: 1; }
+  }
+</style>

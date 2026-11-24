@@ -1,0 +1,143 @@
+---
+import Icon from './Icon.astro';
+import { getSiteSettings, getPartners, getGroupsSplit, assetUrl, withBase } from '../lib/cms';
+import { SOCIAL, UI } from '../lib/labels';
+
+const [site, partners, { community }] = await Promise.all([getSiteSettings(), getPartners(), getGroupsSplit()]);
+const year = new Date().getFullYear();
+
+const columns = [
+  { title: 'הארגון', links: [
+    { href: withBase('/about/'), label: 'אודות' },
+    { href: withBase('/about/#teams'), label: 'הצוותים שלנו' },
+    { href: withBase('/about/#partners'), label: 'שותפים' },
+    site.donation_url && { href: site.donation_url, label: UI.donate, external: true },
+  ] },
+  { title: 'פעילות', links: [
+    { href: withBase('/events/'), label: 'אירועים ורכיבות' },
+    { href: withBase('/join/'), label: 'הצטרפות לפעילות' },
+    { href: withBase('/join/#groups'), label: 'קבוצות וואטסאפ' },
+    { href: withBase('/events/#past'), label: 'גלריית אירועים' },
+  ] },
+  { title: 'משאבים', links: [
+    { href: withBase('/map/'), label: 'מפת שבילים' },
+    { href: withBase('/updates/'), label: 'עדכונים מהשביל' },
+    { href: withBase('/updates/?category=tips'), label: 'טיפים לרכיבה' },
+    { href: withBase('/calendar.ics'), label: 'יומן אירועים מסונכרן' },
+  ] },
+].map((c) => ({ ...c, links: c.links.filter(Boolean) as Array<{ href: string; label: string; external?: boolean }> }));
+---
+<footer class="site-footer">
+  <div class="container">
+    <section class="newsletter" aria-labelledby="nl-title">
+      <div class="stack" style="--stack:8px">
+        <h2 id="nl-title" class="h3">לא מפספסים אף רכיבה</h2>
+        <p>עדכון אחד בחודש: הרכיבות הקרובות, שינויים בשבילים ומה חדש בעמותה.</p>
+      </div>
+      <div class="nl-actions">
+        {site.newsletter_url && <a class="btn btn-primary" href={site.newsletter_url} target="_blank" rel="noopener"><Icon name="mail" size={18} />{UI.newsletter}</a>}
+        {community && <a class="btn btn-ghost-dark" href={community.invite_url} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} />{UI.joinWhatsapp}</a>}
+      </div>
+    </section>
+
+    <div class="main">
+      <div class="about">
+        <a href={withBase('/')} class="logo" aria-label={`${site.name} – דף הבית`}>
+          <img src={assetUrl(site.logo_on_dark)} alt="" width="84" height="88" loading="lazy" />
+        </a>
+        <p>{site.footer_about}</p>
+        <ul role="list" class="social">
+          {site.social_links.map((s) => (
+            <li><a href={s.url} target="_blank" rel="noopener" aria-label={SOCIAL[s.platform]} class="lift"><Icon name={s.platform} size={20} /></a></li>
+          ))}
+        </ul>
+      </div>
+
+      <nav class="cols" aria-label="מפת האתר">
+        {columns.map((c) => (
+          <div>
+            <h3>{c.title}</h3>
+            <ul role="list">
+              {c.links.map((l) => <li><a href={l.href} {...(l.external ? { target: '_blank', rel: 'noopener' } : {})}>{l.label}</a></li>)}
+            </ul>
+          </div>
+        ))}
+        <div>
+          <h3>{UI.contact}</h3>
+          <ul role="list">
+            {site.email && <li><a href={`mailto:${site.email}`} dir="ltr">{site.email}</a></li>}
+            {site.phone && <li><a href={`tel:${site.phone}`} dir="ltr">{site.phone}</a></li>}
+            {site.address && <li>{site.address}</li>}
+            {site.contact_form_url && <li><a href={site.contact_form_url} class="strong">לטופס יצירת קשר ←</a></li>}
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    {partners.length > 0 && (
+      <div class="partners">
+        <span class="label">שותפים</span>
+        <ul role="list">
+          {partners.map((p) => <li>{p.url ? <a href={p.url} target="_blank" rel="noopener">{p.name}</a> : p.name}</li>)}
+        </ul>
+      </div>
+    )}
+
+    <div class="legal">
+      <span>© {year} {site.name}</span>
+      <nav aria-label="משפטי">
+        <a href={withBase('/legal/terms/')}>תקנון האתר</a>
+        <a href={withBase('/legal/privacy/')}>מדיניות פרטיות</a>
+        <a href={withBase('/legal/accessibility/')}>הצהרת נגישות</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer { background: var(--night); color: var(--night-text); font-size: var(--fs-small); overflow: hidden; }
+  .site-footer a { color: var(--night-text); text-decoration: none; }
+  .site-footer a:hover { color: var(--white); }
+
+  .newsletter {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px 40px;
+    padding: 48px 0; border-bottom: 1px solid var(--night-line);
+  }
+  .newsletter h2 { color: var(--white); }
+  .newsletter p { color: var(--night-text); }
+  .nl-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .site-footer .btn-primary, .site-footer .btn-primary:hover { color: var(--white); }
+  .btn-ghost-dark { --btn-bg: transparent; --btn-fg: var(--white); border-color: #3A3145; }
+  .site-footer .btn-ghost-dark:hover { --btn-bg: #241D2C; color: var(--white); }
+
+  .main { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 48px 56px; padding: 56px 0; }
+  .about { flex: 1 1 260px; max-width: 340px; display: flex; flex-direction: column; gap: 20px; line-height: 1.7; }
+  .logo img { height: 88px; width: auto; filter: brightness(0) invert(1); }
+  .social { display: flex; gap: 10px; }
+  .social a {
+    width: 44px; height: 44px; border-radius: var(--r-pill); border: 1px solid #3A3145; color: var(--stone);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .cols { flex: 2 1 560px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 36px 32px; }
+  .cols h3 { font-size: var(--fs-small); color: var(--white); margin-bottom: 14px; }
+  .cols ul { display: flex; flex-direction: column; gap: 4px; }
+  .cols li a, .cols li { display: inline-flex; min-height: 32px; align-items: center; }
+  .cols .strong { color: var(--lilac-line); font-weight: 500; }
+
+  .partners { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 24px; padding: 20px 0; border-top: 1px solid var(--night-line); }
+  .partners .label { font-weight: 700; color: var(--white); }
+  .partners ul { display: flex; flex-wrap: wrap; gap: 6px 20px; color: var(--night-muted); }
+
+  .legal {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 24px;
+    padding: 24px 0 32px; border-top: 1px solid var(--night-line); font-size: 0.8125rem; color: var(--night-muted);
+  }
+  .legal nav { display: flex; flex-wrap: wrap; gap: 4px 24px; }
+  .legal a { color: var(--night-muted); display: inline-flex; min-height: 32px; align-items: center; }
+
+  @media (max-width: 760px) {
+    .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 20px; }
+    .nl-actions, .nl-actions .btn { width: 100%; }
+    .main { padding: 44px 0; }
+  }
+</style>
