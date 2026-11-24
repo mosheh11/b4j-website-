@@ -64,8 +64,7 @@ const marquee = phrases.length ? Array.from({ length: Math.ceil(8 / phrases.leng
           <EventMeta event={ride} />
           <div class="ride-foot">
             <div class="cluster" style="--cluster:10px">
-              {ride.registration_url && <a href={ride.registration_url} target="_blank" rel="noopener" class="btn btn-primary">{UI.register}</a>}
-              <AddToCalendar event={ride} variant="soft" />
+              <AddToCalendar event={ride} variant="primary" />
             </div>
           </div>
         </div>
