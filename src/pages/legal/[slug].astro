@@ -1,0 +1,89 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { getLegalPages, getSiteSettings, withBase, type LegalPage } from '../../lib/cms';
+
+export async function getStaticPaths() {
+  const pages = await getLegalPages();
+  return pages.map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+
+interface Props { page: LegalPage }
+const { page } = Astro.props;
+const [pages, site] = await Promise.all([getLegalPages(), getSiteSettings()]);
+---
+<Layout title={page.title}>
+  <header class="legal-head">
+    <div class="container">
+      <span class="eyebrow">מסמכים ומדיניות</span>
+      <h1 class="h1 title rise">{page.title}</h1>
+    </div>
+  </header>
+
+  <div class="container legal">
+    {pages.length > 1 && (
+      <nav class="toc" aria-label="מסמכים משפטיים">
+        <ul role="list">
+          {pages.map((p) => (
+            <li>
+              <a href={withBase(`/legal/${p.slug}/`)} aria-current={p.slug === page.slug ? 'page' : undefined}>{p.title}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+
+    <article class="doc" aria-labelledby="doc-title">
+      <h2 id="doc-title" class="visually-hidden">{page.title}</h2>
+      <div class="prose" set:html={page.body} />
+      {site.email && (
+        <aside class="contact">
+          <span class="contact-icon" aria-hidden="true"><Icon name="mail" size={22} /></span>
+          <p>שאלות על המסמך? כתבו לנו ל־<a href={`mailto:${site.email}`} dir="ltr">{site.email}</a></p>
+        </aside>
+      )}
+    </article>
+  </div>
+</Layout>
+
+<style>
+  .legal-head { background: var(--stone); padding: clamp(24px, 4vw, 48px) 0 clamp(40px, 5vw, 64px); }
+  .legal-head .container { display: flex; flex-direction: column; gap: 14px; }
+  .title { font-size: clamp(2rem, 1.5rem + 2vw, 3rem); }
+
+  .legal {
+    display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px clamp(40px, 6vw, 96px);
+    align-items: start; padding-block: clamp(40px, 5vw, 72px) var(--section-gap);
+  }
+  .toc { position: sticky; top: calc(var(--header-h) + 24px); }
+  .toc ul { display: flex; flex-direction: column; gap: 6px; }
+  .toc a {
+    display: flex; align-items: center; min-height: 48px; padding: 0 18px; border-radius: var(--r-pill);
+    color: var(--ink); font-weight: 500; text-decoration: none; transition: background-color .2s, color .2s;
+  }
+  .toc a:hover { background: var(--sand); color: var(--ink); }
+  .toc a[aria-current='page'] { background: var(--ink); color: var(--white); }
+
+  .doc { min-width: 0; }
+  .doc .prose { max-width: 70ch; }
+  .contact {
+    margin-top: clamp(40px, 5vw, 56px); max-width: 70ch;
+    display: flex; align-items: center; gap: 16px; padding: 20px 24px;
+    background: var(--lilac); border-radius: var(--r-md); color: var(--ink);
+  }
+  .contact-icon { flex: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--white); color: var(--purple); }
+  .contact a { font-weight: 700; overflow-wrap: anywhere; }
+
+  @media (max-width: 860px) {
+    .legal { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+    .toc { position: static; }
+    .toc ul {
+      flex-direction: row; overflow-x: auto; gap: 8px; scrollbar-width: none;
+      margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter);
+    }
+    .toc ul::-webkit-scrollbar { display: none; }
+    .toc li { flex: none; }
+    .toc a { min-height: 44px; background: var(--sand); white-space: nowrap; font-size: var(--fs-small); }
+    .contact { align-items: flex-start; padding: 18px; }
+  }
+</style>

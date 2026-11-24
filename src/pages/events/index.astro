@@ -1,0 +1,63 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import Icon from '../../components/Icon.astro';
+import EventFeature from '../../components/EventFeature.astro';
+import WhatsAppCTA from '../../components/WhatsAppCTA.astro';
+import { getEvents, getPage, getGroupsSplit, type CmsImage } from '../../lib/cms';
+import { UI } from '../../lib/labels';
+
+interface EventsPage { banner_title: string; banner_text?: string; banner_image?: CmsImage | null }
+
+const [page, events, { community }] = await Promise.all([getPage<EventsPage>('events'), getEvents(), getGroupsSplit()]);
+const upcoming = events.filter((e) => e.is_upcoming);
+---
+<Layout title="אירועים" description={page.banner_text}>
+  <PageBanner title={page.banner_title} text={page.banner_text} image={page.banner_image} />
+
+  <!-- UPCOMING -->
+  <section id="upcoming" class="container section" aria-labelledby="upcoming-title">
+    <div class="section-head">
+      <h2 id="upcoming-title" class="h2">אירועים קרובים</h2>
+      {upcoming.length > 0 && <span class="count">{upcoming.length} אירועים בלוח</span>}
+    </div>
+
+    {upcoming.length === 0 ? (
+      <div class="empty">
+        <span class="empty-ico"><Icon name="calendar" size={30} /></span>
+        <p>{UI.noUpcoming}</p>
+        {community && (
+          <a href={community.invite_url} target="_blank" rel="noopener" class="btn btn-whatsapp">
+            <Icon name="whatsapp" size={20} />{UI.joinWhatsapp}
+          </a>
+        )}
+      </div>
+    ) : (
+      <ul role="list" class="upcoming-list">
+        {upcoming.map((e, i) => <li class="reveal"><EventFeature event={e} next={i === 0} /></li>)}
+      </ul>
+    )}
+  </section>
+
+  <!-- STAY IN TOUCH -->
+  <section id="stay" class="container section">
+    <div class="reveal"><WhatsAppCTA title="לא רוצים לפספס אף רכיבה?" text="הצטרפו לוואטסאפ" /></div>
+  </section>
+</Layout>
+
+<style>
+  .count { font-size: var(--fs-small); font-weight: 500; color: var(--muted); }
+  .upcoming-list { display: flex; flex-direction: column; gap: 24px; }
+  .upcoming-list > li { min-width: 0; }
+
+  .empty {
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;
+    padding: clamp(36px, 5vw, 64px) 24px; border-radius: var(--r-lg); background: var(--stone);
+  }
+  .empty p { max-width: 32em; font-size: var(--fs-lead); color: var(--slate); }
+  .empty-ico { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--white); color: var(--purple); }
+
+  @media (max-width: 760px) {
+    .empty .btn { width: 100%; }
+  }
+</style>

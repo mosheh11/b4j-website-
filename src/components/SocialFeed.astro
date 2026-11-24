@@ -1,0 +1,126 @@
+---
+/**
+ * Live social feed — the official embeds (outside the CMS contract, code-owned):
+ *  - Facebook Page Plugin (timeline)
+ *  - Instagram profile embed
+ *  - X timeline widget
+ * Profile URLs come from site_settings.social_links. Embeds load lazily (iframes
+ * with loading=lazy; the X script only when the card scrolls into view). Each card
+ * keeps a plain "follow" link so it still works if a network blocks embedding.
+ * On phones the cards become a swipe carousel.
+ */
+import Icon from './Icon.astro';
+import { getSiteSettings } from '../lib/cms';
+
+interface Props { layout?: 'row' | 'stack' }
+const site = await getSiteSettings();
+const link = (p: string) => site.social_links.find((s) => s.platform === p);
+const fb = link('facebook'), ig = link('instagram'), x = link('x');
+
+const xPosts = (site.x_featured_posts ?? []).map((u) => u.replace('://x.com/', '://twitter.com/')).slice(0, 3);
+const igUser = ig?.url.match(/instagram\.com\/([^/?#]+)/)?.[1];
+const xUser = x?.url.match(/(?:x|twitter)\.com\/([^/?#]+)/)?.[1];
+const fbSrc = fb && `https://www.facebook.com/plugins/page.php?${new URLSearchParams({
+  href: fb.url, tabs: 'timeline', small_header: 'true',
+  adapt_container_width: 'true', hide_cover: 'false', show_facepile: 'false', locale: 'he_IL',
+})}`;
+---
+<div class="feed">
+  {fb && fbSrc && (
+    <article class="card net-card">
+      <header><span class="net"><Icon name="facebook" size={18} />פייסבוק</span><a href={fb.url} target="_blank" rel="noopener" class="link-arrow">לעמוד</a></header>
+      <div class="embed">
+        <iframe data-fb-src={fbSrc} title="עמוד הפייסבוק של אופניים בשביל ירושלים" scrolling="no" allow="encrypted-media; clipboard-write; web-share"></iframe>
+      </div>
+    </article>
+  )}
+  {ig && igUser && (
+    <article class="card net-card">
+      <header><span class="net"><Icon name="instagram" size={18} />אינסטגרם</span><a href={ig.url} target="_blank" rel="noopener" class="link-arrow" dir="auto">@{igUser}</a></header>
+      <div class="embed">
+        <iframe src={`https://www.instagram.com/${igUser}/embed`} title="פרופיל האינסטגרם של אופניים בשביל ירושלים" loading="lazy" scrolling="no"></iframe>
+      </div>
+    </article>
+  )}
+  {x && xUser && (
+    <article class="card net-card">
+      <header><span class="net"><Icon name="x" size={18} />X</span><a href={x.url} target="_blank" rel="noopener" class="link-arrow" dir="auto">@{xUser}</a></header>
+      <div class="embed embed-x" data-x-embed>
+        {xPosts.map((u) => (
+          <blockquote class="twitter-tweet" data-lang="he" data-dnt="true" data-conversation="none"><a href={u}>פוסט של @{xUser} ב־X</a></blockquote>
+        ))}
+        {xPosts.length === 0 && <a class="twitter-timeline" data-lang="he" data-chrome="noheader nofooter transparent" data-dnt="true" href={`https://twitter.com/${xUser}`}>
+          <span class="x-follow">
+            <span class="x-logo"><Icon name="x" size={34} stroke={2.2} /></span>
+            <b dir="ltr">@{xUser}</b>
+            <span class="x-text">עדכונים, עמדות ותגובות בזמן אמת</span>
+            <span class="btn btn-outline btn-sm">עקבו ב־X</span>
+          </span>
+        </a>}
+      </div>
+    </article>
+  )}
+</div>
+
+<script>
+  // Facebook's plugin renders at a fixed size, so give it the embed box's actual size
+  // (all three embeds share one height). Loaded when near the viewport; re-sized on rotate/resize.
+  const fbFrames = document.querySelectorAll<HTMLIFrameElement>('iframe[data-fb-src]');
+  const sizeFb = (f: HTMLIFrameElement) => {
+    const box = f.parentElement!;
+    const w = Math.min(500, Math.round(box.clientWidth)), h = Math.round(box.clientHeight);
+    const src = `${f.dataset.fbSrc}&width=${w}&height=${h}`;
+    if (w > 0 && f.src !== src) f.src = src;
+  };
+  if (fbFrames.length) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { sizeFb(e.target as HTMLIFrameElement); io.unobserve(e.target); } }), { rootMargin: '600px' });
+    fbFrames.forEach((f) => io.observe(f));
+    let t: number | undefined, lastW = innerWidth;
+    addEventListener('resize', () => { if (innerWidth === lastW) return; lastW = innerWidth; clearTimeout(t); t = window.setTimeout(() => fbFrames.forEach((f) => f.src && sizeFb(f)), 300); });
+  }
+
+  // Load X's widget script only when its card is near the viewport.
+  const xs = document.querySelectorAll('[data-x-embed]');
+  if (xs.length) {
+    const load = () => {
+      if (document.querySelector('script[data-x-widgets]')) return;
+      const s = document.createElement('script');
+      s.src = 'https://platform.twitter.com/widgets.js'; s.async = true; s.dataset.xWidgets = '';
+      document.body.appendChild(s);
+    };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { load(); io.disconnect(); } }, { rootMargin: '400px' });
+      xs.forEach((el) => io.observe(el));
+    } else load();
+  }
+</script>
+
+<style>
+  .feed { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .net-card { display: flex; flex-direction: column; padding: 16px; gap: 12px; color: var(--ink); container-type: inline-size; }
+  header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-inline: 4px; }
+  .net { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+  header .link-arrow { min-height: 36px; }
+  /* Same height in every card: Instagram's profile embed is ~header + two rows of square tiles. */
+  .embed { height: clamp(360px, calc(150px + 66.6cqw), 520px); border-radius: var(--r-sm); overflow: hidden; background: var(--sand); }
+  .embed iframe { width: 100%; height: 100%; border: 0; display: block; background: var(--white); }
+  .embed-x { overflow-y: auto; background: var(--white); padding: 0 6px; overscroll-behavior: contain; }
+  .embed-x :global(.twitter-tweet) { margin: 8px auto !important; }
+  .embed-x blockquote.twitter-tweet { margin: 12px; padding: 16px; border: 1px solid var(--line); border-radius: var(--r-sm); font-size: var(--fs-small); }
+  .embed-x > a { display: flex; align-items: center; justify-content: center; height: 100%; text-decoration: none; color: var(--ink); }
+  /* Shown until (or instead of, when X blocks logged-out timelines) the live widget. */
+  .x-follow { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 24px; }
+  .x-logo { width: 72px; height: 72px; border-radius: 50%; background: var(--ink); color: var(--white); display: flex; align-items: center; justify-content: center; margin-bottom: 6px; }
+  .x-follow b { font-size: 1.25rem; }
+  .x-text { color: var(--muted); font-size: var(--fs-small); margin-bottom: 8px; }
+  .embed-x > a:hover .btn { --btn-bg: var(--ink); --btn-fg: var(--white); }
+
+  @media (max-width: 1000px) {
+    .feed {
+      display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+      margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter);
+    }
+    .feed::-webkit-scrollbar { display: none; }
+    .net-card { flex: 0 0 min(88%, 420px); scroll-snap-align: center; }
+  }
+</style>

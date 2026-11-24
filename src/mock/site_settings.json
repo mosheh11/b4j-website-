@@ -1,0 +1,31 @@
+{
+  "logo": { "id": "/images/logo-light-bg.svg", "description": "אופניים בשביל ירושלים" },
+  "logo_on_dark": { "id": "/images/logo-dark-bg.svg", "description": "אופניים בשביל ירושלים" },
+  "email": "info@example.org",
+  "phone": "",
+  "newsletter_url": "https://example.org/newsletter",
+  "donation_url": "https://avi-dashboard.netlify.app",
+  "contact_form_url": "mailto:info@example.org",
+  "calendar_subscribe_url": "",
+  "community_group": 1,
+  "x_featured_posts": [
+    "https://x.com/Bikes4JLM/status/2023784953247404337",
+    "https://x.com/Bikes4JLM/status/2004850870736093599"
+  ],
+  "social_links": [
+    { "platform": "instagram", "url": "https://www.instagram.com/bicyclesforjerusalem", "handle": "@bicyclesforjerusalem" },
+    { "platform": "facebook", "url": "https://www.facebook.com/cyclejerusalem", "handle": "cyclejerusalem" },
+    { "platform": "x", "url": "https://x.com/Bikes4JLM", "handle": "@Bikes4JLM" },
+    { "platform": "whatsapp", "url": "https://chat.whatsapp.com/DgehxNcontJD6ovKF4Yv3l", "handle": "קהילת אב״י" }
+  ],
+  "translations": [
+    {
+      "languages_code": "he",
+      "name": "אופניים בשביל ירושלים",
+      "short_name": "אב״י",
+      "tagline": "עמותה ללא כוונות רווח, שמטרתה לקדם ולעודד את תרבות הרכיבה בירושלים.",
+      "footer_about": "עמותה לקידום תשתיות רכיבה, תחבורה בת־קיימא ותרבות אופניים בטוחה בירושלים והסביבה.",
+      "address": "ירושלים"
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import FeedCard from '../../components/updates/FeedCard.astro';
+import { getPage, getPosts, getPostCategories } from '../../lib/cms';
+import { UI } from '../../lib/labels';
+
+interface UpdatesPage { banner_title: string; banner_highlight?: string; banner_text?: string; banner_eyebrow?: string }
+const [page, posts, allCategories] = await Promise.all([
+  getPage<UpdatesPage>('updates'), getPosts(), getPostCategories(),
+]);
+const counts = new Map<string, number>();
+for (const p of posts) counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
+const categories = allCategories;
+---
+<Layout title={page.banner_title} description={page.banner_text}>
+  <PageBanner eyebrow={page.banner_eyebrow} title={page.banner_title} highlight={page.banner_highlight} text={page.banner_text} />
+
+  <section class="container feed-wrap" aria-labelledby="feed-title" data-feed>
+    <h2 id="feed-title" class="visually-hidden">כל העדכונים</h2>
+
+    <div class="filters" role="group" aria-label="סינון לפי קטגוריה" data-filters hidden>
+      <div class="chips">
+        <button type="button" class="fchip" aria-pressed="true" data-cat="">
+          {UI.filterAll}<span class="count">{posts.length}</span>
+        </button>
+        {categories.map((c) => (
+          <button type="button" class="fchip" aria-pressed="false" data-cat={c.id}>
+            {c.name}<span class="count">{counts.get(c.id) ?? 0}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+    <p class="visually-hidden" aria-live="polite" data-status></p>
+
+    {posts.length > 0 && (
+      <ul role="list" class="feed" data-list>
+        {posts.map((p, i) => (
+          <li class:list={['item', { 'is-lead': i === 0 }]} data-category={p.category}>
+            <FeedCard post={p} categories={categories} eager={i === 0} />
+          </li>
+        ))}
+      </ul>
+    )}
+
+    <div class="empty" data-empty hidden={posts.length > 0}>
+      <span class="empty-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="16.5" r="3.5"/><circle cx="18.5" cy="16.5" r="3.5"/><path d="M5.5 16.5L9 9h6l3.5 7.5M9 9l3 7.5h-6.5M12 5h3l2 4"/></svg>
+      </span>
+      <p class="empty-text">{UI.noPosts}</p>
+      {posts.length > 0 && <button type="button" class="btn btn-soft btn-sm" data-reset>הצגת כל העדכונים</button>}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .feed-wrap { margin-top: calc(clamp(56px, 7vw, 96px) * -1 + 8px); position: relative; padding-bottom: var(--section-gap); }
+
+  /* ---------- Filter chips ---------- */
+  .filters { margin-bottom: clamp(20px, 3vw, 32px); }
+  .filters[hidden] { display: none; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .fchip {
+    display: inline-flex; align-items: center; gap: 8px;
+    min-height: 44px; padding: 0 18px; border-radius: var(--r-pill);
+    background: var(--white); color: var(--ink); border: 1.5px solid var(--line);
+    font-size: var(--fs-small); font-weight: 500; line-height: 1.2; white-space: nowrap; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(26, 20, 32, 0.05);
+    transition: background-color .2s, border-color .2s, color .2s, transform .2s var(--ease);
+  }
+  .fchip:hover { border-color: var(--ink); }
+  .fchip[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--white); box-shadow: none; }
+  .count {
+    min-width: 22px; height: 22px; padding: 0 6px; border-radius: var(--r-pill);
+    display: inline-grid; place-items: center; font-size: 0.75rem; font-weight: 700;
+    background: var(--sand); color: var(--muted);
+  }
+  .fchip[aria-pressed='true'] .count { background: rgba(255, 255, 255, .16); color: var(--white); }
+
+  /* ---------- Feed ---------- */
+  .feed { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .item { min-width: 0; }
+  .item[hidden] { display: none; }
+  .item.is-lead { grid-column: 1 / -1; }
+  @media (max-width: 1080px) { .feed { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  /* ---------- Empty state ---------- */
+  .empty {
+    display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
+    padding: clamp(40px, 6vw, 72px) 24px; border-radius: var(--r-lg);
+    background: var(--white); border: 1.5px dashed var(--lilac-line);
+  }
+  .empty[hidden] { display: none; }
+  .empty-icon { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--lilac); color: var(--purple); }
+  .empty-text { font-size: var(--fs-lead); color: var(--ink); font-weight: 500; max-width: 28ch; }
+
+  @media (max-width: 599px) {
+    .feed { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .feed .is-lead { margin-bottom: 8px; }
+    /* Chip row scrolls sideways instead of wrapping */
+    .chips {
+      flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; overscroll-behavior-x: contain;
+      margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); padding-block: 4px 10px;
+      scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    }
+    .chips::-webkit-scrollbar { display: none; }
+    .fchip { flex: none; scroll-snap-align: start; box-shadow: none; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-feed]');
+  if (root) {
+    const bar = root.querySelector<HTMLElement>('[data-filters]')!;
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('.fchip')];
+    const items = [...root.querySelectorAll<HTMLElement>('.item')];
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+    const row = root.querySelector<HTMLElement>('.chips')!;
+    /** Bring a chip to the middle of the (mobile) scroll row without scrolling the page. */
+    const center = (chip: HTMLElement, smooth = true) => {
+      const a = chip.getBoundingClientRect(), b = row.getBoundingClientRect();
+      row.scrollBy({ left: a.left + a.width / 2 - (b.left + b.width / 2), behavior: smooth ? 'smooth' : 'auto' });
+    };
+    const valid = new Set(chips.map((c) => c.dataset.cat ?? ''));
+
+    const apply = (cat: string, push = true) => {
+      if (!valid.has(cat)) cat = '';
+      let shown = 0;
+      for (const el of items) {
+        const match = !cat || el.dataset.category === cat;
+        el.hidden = !match;
+        el.classList.toggle('is-lead', match && shown === 0);
+        if (match) shown++;
+      }
+      for (const c of chips) c.setAttribute('aria-pressed', String((c.dataset.cat ?? '') === cat));
+      empty.hidden = shown > 0;
+      const label = chips.find((c) => (c.dataset.cat ?? '') === cat)?.firstChild?.textContent?.trim() ?? '';
+      status.textContent = shown ? `מוצגים ${shown} עדכונים${cat ? ` בקטגוריה ${label}` : ''}` : empty.textContent?.trim() ?? '';
+      if (push) {
+        const url = new URL(location.href);
+        if (cat) url.searchParams.set('category', cat); else url.searchParams.delete('category');
+        history.replaceState(null, '', url);
+      }
+    };
+
+    bar.hidden = false;
+    chips.forEach((c) => c.addEventListener('click', () => {
+      apply(c.dataset.cat ?? '');
+      center(c);
+    }));
+    root.querySelector('[data-reset]')?.addEventListener('click', () => { apply(''); chips[0]?.focus(); });
+
+    const initial = new URLSearchParams(location.search).get('category') ?? '';
+    if (initial) {
+      apply(initial, false);
+      const on = chips.find((c) => c.getAttribute('aria-pressed') === 'true');
+      if (on) center(on, false);
+    }
+  }
+</script>

@@ -1,0 +1,134 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageBanner from '../components/PageBanner.astro';
+import SocialFeed from '../components/SocialFeed.astro';
+import Icon from '../components/Icon.astro';
+import RulesAccordion from '../components/join/RulesAccordion.astro';
+import { getPage, getGroupsSplit, withBase } from '../lib/cms';
+import type { CmsImage } from '../lib/cms';
+import { UI } from '../lib/labels';
+import { qrSvg } from '../lib/qr';
+
+interface JoinPage {
+  banner_title: string; banner_text?: string; banner_image?: CmsImage | null;
+  community_cta_text?: string; group_rules?: string;
+}
+const [page, { community, topics }] = await Promise.all([getPage<JoinPage>('join'), getGroupsSplit()]);
+// The community group is listed first, like any other group, with a "recommended" tag.
+const groups = await Promise.all(
+  [community, ...topics].filter(Boolean).map(async (g) => ({ ...g, qr: await qrSvg(g.invite_url), recommended: g === community })),
+);
+---
+<Layout title={UI.joinActivity} description={page.banner_text}>
+  <div class="join-top">
+  <PageBanner title={page.banner_title} text={page.banner_text} image={page.banner_image} />
+  </div>
+
+  <!-- WHATSAPP GROUPS -->
+  {groups.length > 0 && (
+    <section id="groups" class="container section groups-section" aria-labelledby="groups-title">
+      <div class="section-head">
+        <h2 id="groups-title" class="h2">קבוצות הוואטסאפ</h2>
+      </div>
+      <ul role="list" class="groups">
+        {groups.map((g) => (
+          <li class:list={['group card lift', { recommended: g.recommended }]}>
+            <span class="g-icon" aria-hidden="true"><Icon name="whatsapp" size={22} /></span>
+            <div class="g-copy">
+              {g.recommended && <span class="badge"><Icon name="sparkle" size={14} stroke={2.2} />מומלץ לכל מי שחדש</span>}
+              <h3 class="g-name">{g.name}</h3>
+              {g.description && <p class="g-desc">{g.description}</p>}
+              <a href={g.invite_url} target="_blank" rel="noopener" class="btn btn-sm g-btn" aria-label={`${UI.joinGroup} לקבוצה ${g.name}`}>
+                {UI.joinGroup}<Icon name="arrow" size={16} stroke={2.2} />
+              </a>
+            </div>
+            <figure class="g-qr">
+              <div class="qr-img" role="img" aria-label={`קוד QR להצטרפות לקבוצה ${g.name}`} set:html={g.qr} />
+              <figcaption>סרקו להצטרפות</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <!-- RULES -->
+  {page.group_rules && (
+    <section class="container section rules-section" aria-labelledby="rules-title">
+      <div class="rules-head">
+        <span class="eyebrow">לפני שמצטרפים</span>
+        <h2 id="rules-title" class="h2">כללי הקבוצות</h2>
+        <p class="lead">כמה כללים פשוטים ששומרים על הקבוצות נעימות, שימושיות ובנושא.</p>
+      </div>
+      <div class="rules-list"><RulesAccordion html={page.group_rules} /></div>
+    </section>
+  )}
+
+  <!-- SOCIAL -->
+  <section class="container section" aria-labelledby="social-title">
+    <div class="section-head">
+      <h2 id="social-title" class="h2">הפיד החברתי שלנו</h2>
+    </div>
+    <SocialFeed />
+  </section>
+</Layout>
+
+<style>
+  /* ---------- WhatsApp groups ---------- */
+  .groups-section { padding-top: clamp(40px, 5vw, 64px); }
+  .groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 16px; }
+  .group {
+    position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: start;
+    gap: 16px 18px; padding: 24px; border-radius: var(--r-md);
+  }
+  .group:hover { border-color: var(--lilac-line); }
+  .group:focus-within { border-color: var(--purple); }
+  .group.recommended { background: var(--green-50); border-color: #CFE8DF; }
+  .g-icon {
+    display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%;
+    background: var(--green-50); color: var(--green-700);
+  }
+  .recommended .g-icon { background: var(--white); }
+  .g-copy { min-width: 0; height: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: var(--r-pill); margin-bottom: 2px;
+    background: var(--green-700); color: var(--white); font-size: 0.8125rem; font-weight: 700; line-height: 1.3;
+  }
+  .g-name { font-size: 1.1875rem; line-height: 1.3; letter-spacing: -0.01em; }
+  .g-desc { font-size: var(--fs-small); line-height: 1.6; color: var(--muted); }
+  .g-btn {
+    margin-top: auto; --btn-bg: var(--white); --btn-fg: var(--green-700); border-color: #BFE0D4;
+    transition: background-color .2s, color .2s, border-color .2s;
+  }
+  .g-desc + .g-btn, .g-name + .g-btn { margin-top: 10px; }
+  .g-btn:focus-visible { outline-offset: 3px; }
+  .group:hover .g-btn { --btn-bg: var(--green-700); --btn-fg: var(--white); border-color: var(--green-700); }
+  .g-btn:hover { transform: none; }
+
+  .g-qr { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .qr-img {
+    width: 124px; height: 124px; box-sizing: border-box; padding: 10px; border-radius: 16px;
+    background: var(--white); border: 1px solid var(--line);
+  }
+  .qr-img :global(svg) { width: 100%; height: 100%; display: block; }
+  .g-qr figcaption { font-size: 0.75rem; color: var(--muted); }
+
+  /* ---------- Rules ---------- */
+  .rules-section { display: flex; flex-wrap: wrap; gap: 28px 64px; align-items: flex-start; }
+  .rules-head { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 14px; position: sticky; top: calc(var(--header-h) + 24px); }
+  .rules-list { flex: 1.6 1 520px; min-width: 0; }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 760px) {
+    /* Phones: groups are the point of the page — keep them near the top. */
+    .join-top :global(.page-banner .art) { display: none; }
+    .groups-section { padding-top: 32px; }
+    .g-qr { display: none; } /* on a phone you tap, you don't scan */
+    .group { grid-template-columns: 1fr; padding: 18px; }
+    .g-icon { display: none; }
+    .g-name { font-size: 1.0625rem; }
+    .g-btn { align-self: stretch; }
+
+    .rules-head { position: static; }
+  }
+</style>

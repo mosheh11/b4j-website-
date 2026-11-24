@@ -1,0 +1,362 @@
+---
+/**
+ * About ("אודות הארגון"): banner · vision & mission · activities · achievements
+ * (stats + milestones) · teams · partners · join CTA.
+ * CMS-owned copy comes from page_about and the teams/milestones/stats/partners
+ * collections; section headings, link labels and icons are owned by the code.
+ */
+import Layout from '../layouts/Layout.astro';
+import WhatsAppCTA from '../components/WhatsAppCTA.astro';
+import Icon from '../components/Icon.astro';
+import StatsGrid from '../components/StatsGrid.astro';
+import {
+  getPage, getTeams, getMilestones, getPartners, assetUrl, withBase, type CmsImage,
+} from '../lib/cms';
+import { UI } from '../lib/labels';
+
+interface AboutPage {
+  banner_title: string;
+  banner_text?: string;
+  banner_image?: CmsImage | null;
+  vision?: string;
+  mission?: string;
+  values?: Array<{ title: string; text?: string }>;
+  activities?: Array<{ title: string; text?: string }>;
+}
+
+const [page, teams, milestones, partners, home] = await Promise.all([
+  getPage<AboutPage>('about'), getTeams(), getMilestones(), getPartners(),
+  getPage<{ whatsapp_title?: string; whatsapp_text?: string }>('home'),
+]);
+
+const values = page.values ?? [];
+const activities = page.activities ?? [];
+
+/* Vision: the clause after the dash gets the purple accent (whole sentence in ink if there is none). */
+const visionMatch = page.vision?.match(/^(.+?)\s+([–—]\s*.+)$/);
+const vision = visionMatch ? { lead: visionMatch[1], accent: visionMatch[2] } : { lead: page.vision ?? '', accent: '' };
+
+/* Activities are mapped to their page by position — links and icons are code-owned. */
+const ACTIVITY_LINKS = [
+  { href: '/events/', label: 'לרכיבות הקרובות', icon: 'bike' },
+  { href: '/events/', label: 'לכל האירועים', icon: 'calendar' },
+  { href: '/map/', label: 'למפת השבילים', icon: 'map' },
+  { href: '/join/#groups', label: 'לקבוצות הוואטסאפ', icon: 'whatsapp' },
+] as const;
+
+const initial = (name: string) => name.trim().charAt(0);
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<Layout title={page.banner_title} description={page.banner_text} image={page.banner_image ? assetUrl(page.banner_image, { width: 1600 }) : undefined}>
+  <!-- BANNER -->
+  <section class="banner">
+    <div class="container banner-copy rise">
+      <span class="eyebrow">אודות הארגון</span>
+      <h1 class="display">{page.banner_title}</h1>
+      {page.banner_text && <p class="lead">{page.banner_text}</p>}
+    </div>
+    {page.banner_image && (
+      <div class="container banner-art-wrap rise-2">
+        <figure class="banner-art">
+          <img src={assetUrl(page.banner_image, { width: 1600 })} alt={page.banner_image.description ?? ''} width="1600" height="480" fetchpriority="high" />
+        </figure>
+        <span class="banner-dot" aria-hidden="true"></span>
+      </div>
+    )}
+  </section>
+
+  <!-- VISION & MISSION -->
+  <section class="container section" aria-labelledby="vision-title">
+    <h2 id="vision-title" class="eyebrow">החזון והמשימה</h2>
+    {page.vision && (
+      <p class="vision reveal">
+        {vision.lead}{vision.accent && <> <span class="accent">{vision.accent}</span></>}
+      </p>
+    )}
+    {page.mission && <p class="mission reveal">{page.mission}</p>}
+    {values.length > 0 && (
+      <>
+        <h3 class="visually-hidden">הערכים שלנו</h3>
+        <ul role="list" class="values">
+          {values.map((v, i) => (
+            <li class="value reveal">
+              <span class="value-num" aria-hidden="true">{pad(i + 1)}</span>
+              <h4 class="value-title">{v.title}</h4>
+              {v.text && <p>{v.text}</p>}
+            </li>
+          ))}
+        </ul>
+      </>
+    )}
+  </section>
+
+  <!-- ACTIVITIES -->
+  {activities.length > 0 && (
+    <section id="activities" class="container section" aria-labelledby="activities-title">
+      <div class="section-head">
+        <h2 id="activities-title" class="h2">הפעילויות המרכזיות</h2>
+      </div>
+      <ul role="list" class="activities">
+        {activities.map((a, i) => {
+          const link = ACTIVITY_LINKS[i] ?? ACTIVITY_LINKS[ACTIVITY_LINKS.length - 1];
+          return (
+            <li class="reveal">
+              <a href={withBase(link.href)} class="card lift activity">
+                <span class="activity-icon"><Icon name={link.icon} size={26} /></span>
+                <h3 class="activity-title">{a.title}</h3>
+                {a.text && <p class="activity-text">{a.text}</p>}
+                <span class="activity-more">{link.label}<Icon name="arrow" size={18} stroke={2} /></span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  )}
+
+  <!-- ACHIEVEMENTS -->
+  <section id="achievements" class="container section" aria-labelledby="achievements-title">
+    <div class="section-head">
+      <h2 id="achievements-title" class="h2">הישגים</h2>
+    </div>
+    <div class="reveal"><StatsGrid columns={4} /></div>
+
+    {milestones.length > 0 && (
+      <div class="timeline-wrap">
+        <h3 class="h3 timeline-title">ציוני דרך</h3>
+        <ol role="list" class="timeline">
+          {milestones.map((m) => (
+            <li class="milestone reveal">
+              <span class="milestone-dot" aria-hidden="true"></span>
+              <span class="milestone-year">{m.year}</span>
+              <h4 class="milestone-title">{m.title}</h4>
+              {m.description && <p class="milestone-text">{m.description}</p>}
+            </li>
+          ))}
+        </ol>
+      </div>
+    )}
+  </section>
+
+  <!-- TEAMS -->
+  {teams.length > 0 && (
+    <section id="teams" class="container section" aria-labelledby="teams-title">
+      <div class="section-head">
+        <h2 id="teams-title" class="h2">הצוותים שלנו</h2>
+        <p class="lead">כל מה שקורה באב״י נעשה בידי מתנדבים. מצאו את הצוות שמתאים לכם וכתבו לו.</p>
+      </div>
+      <ul role="list" class="teams">
+        {teams.map((t) => (
+          <li class="team reveal">
+            <h3 class="team-name">{t.name}</h3>
+            {t.description && <p class="team-text">{t.description}</p>}
+            {t.members && t.members.length > 0 && (
+              <div class="team-members">
+                <span class="visually-hidden">חברי הצוות:</span>
+                <ul role="list" class="members">
+                  {t.members.map((name) => (
+                    <li class="member"><span class="avatar" aria-hidden="true">{initial(name)}</span>{name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {t.contact_email && (
+              <a href={`mailto:${t.contact_email}`} class="btn btn-soft btn-sm team-contact">
+                <Icon name="mail" size={18} />כתבו לצוות
+                <span class="visually-hidden">{t.name} ({t.contact_email})</span>
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <!-- PARTNERS -->
+  {partners.length > 0 && (
+    <section id="partners" class="container section" aria-labelledby="partners-title">
+      <div class="section-head">
+        <h2 id="partners-title" class="h2">שותפים</h2>
+      </div>
+      <ul role="list" class="partners reveal">
+        {partners.map((p) => {
+          const inner = p.logo?.id
+            ? <img src={assetUrl(p.logo, { width: 320 })} alt={p.logo.description || p.name} loading="lazy" width="160" height="64" />
+            : <span class="partner-name">{p.name}</span>;
+          return (
+            <li>
+              {p.url
+                ? <a href={p.url} target="_blank" rel="noopener" class="partner is-link">{inner}<Icon name="external" size={16} class="partner-ext" /><span class="visually-hidden">(נפתח בחלון חדש)</span></a>
+                : <div class="partner">{inner}</div>}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  )}
+
+  <!-- JOIN CTA -->
+  <section class="container section">
+    <div class="reveal"><WhatsAppCTA title="רוצים לקחת חלק?" text={home.whatsapp_text} /></div>
+  </section>
+</Layout>
+
+<style>
+  /* ---------- Banner: stone ground, display title, wide photo straddling the edge ---------- */
+  .banner {
+    --overlap: clamp(72px, 10vw, 160px);
+    background: linear-gradient(to bottom, var(--stone) calc(100% - var(--overlap)), var(--white) 0);
+    padding-top: clamp(24px, 5vw, 72px);
+    overflow: hidden;
+  }
+  .banner-copy { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 18px; }
+  .banner-copy .lead { max-width: 30em; }
+  @media (min-width: 1000px) {
+    .banner-copy { grid-template-columns: auto minmax(0, 1fr); align-items: end; column-gap: clamp(48px, 8vw, 120px); }
+    .banner-copy .eyebrow { grid-column: 1 / -1; }
+    .banner-copy .lead { justify-self: end; margin: 0 0 0.6em; }
+  }
+  .banner-art-wrap { position: relative; margin-top: clamp(32px, 5vw, 64px); isolation: isolate; }
+  .banner-art {
+    margin: 0; border-radius: var(--r-xl); overflow: hidden; background: var(--purple-100);
+    aspect-ratio: 1600 / 520; box-shadow: var(--shadow-card);
+  }
+  .banner-art img { width: 100%; height: 100%; object-fit: cover; object-position: center 60%; }
+  .banner-dot {
+    position: absolute; inset-inline-end: calc(var(--gutter) + clamp(24px, 5vw, 80px)); top: clamp(-56px, -4vw, -32px);
+    width: clamp(64px, 9vw, 128px); aspect-ratio: 1; border-radius: 50%; background: var(--green); z-index: -1;
+  }
+
+  /* ---------- Vision & mission ---------- */
+  .vision {
+    margin-top: 20px; max-width: 22ch;
+    font-size: clamp(2rem, 1.3rem + 2.8vw, 3.75rem); line-height: 1.12; letter-spacing: -0.03em;
+    font-weight: 700; color: var(--ink); text-wrap: balance;
+  }
+  .vision .accent { color: var(--purple); }
+  .mission { margin-top: 24px; max-width: 40em; font-size: var(--fs-lead); line-height: 1.75; color: var(--slate); }
+  .values {
+    margin-top: clamp(40px, 5vw, 64px);
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
+  }
+  .value {
+    background: var(--stone); border-radius: var(--r-md); padding: clamp(24px, 3vw, 36px);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .value-num { font-size: var(--fs-label); font-weight: 700; color: var(--green-700); letter-spacing: 0.04em; }
+  .value-title { font-size: var(--fs-h3); letter-spacing: -0.02em; line-height: 1.2; }
+  .value p { color: var(--slate); }
+
+  /* ---------- Activities ---------- */
+  .activities { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .activities > li { display: flex; }
+  .activity {
+    flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 28px 24px 20px; border-radius: var(--r-md);
+  }
+  .activity-icon {
+    display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 18px;
+    background: var(--lilac); color: var(--purple); margin-bottom: 8px; transition: background-color .25s, color .25s;
+  }
+  .activity:hover .activity-icon { background: var(--purple); color: var(--white); }
+  .activity-title { font-size: 1.25rem; letter-spacing: -0.015em; line-height: 1.25; }
+  .activity-text { color: var(--slate); font-size: var(--fs-small); line-height: 1.65; }
+  .activity-more {
+    margin-top: auto; padding-top: 12px; min-height: 44px; display: inline-flex; align-items: center; gap: 8px;
+    color: var(--purple); font-weight: 700; font-size: var(--fs-small);
+  }
+  .activity-more :global(svg) { transition: transform .2s var(--ease); }
+  .activity:hover .activity-more :global(svg) { transform: translateX(-4px); }
+
+  /* ---------- Achievements: milestones timeline ---------- */
+  .timeline-wrap { margin-top: clamp(48px, 6vw, 80px); }
+  .timeline-title { margin-bottom: 28px; }
+  .timeline {
+    --dot: 16px;
+    position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 24px;
+  }
+  .timeline::before {
+    content: ''; position: absolute; inset-inline: 0; top: calc(var(--dot) / 2 - 1px); height: 2px;
+    background: repeating-linear-gradient(to left, var(--lilac-line) 0 8px, transparent 8px 14px);
+  }
+  .milestone { position: relative; display: flex; flex-direction: column; gap: 6px; padding-top: calc(var(--dot) + 20px); }
+  .milestone-dot {
+    position: absolute; top: 0; inset-inline-start: 0; width: var(--dot); height: var(--dot); border-radius: 50%;
+    background: var(--white); border: 4px solid var(--purple);
+  }
+  .milestone:last-child .milestone-dot { background: var(--green); border-color: var(--green); box-shadow: 0 0 0 6px var(--green-50); }
+  .milestone-year { font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1; color: var(--purple); }
+  .milestone-title { font-size: 1.0625rem; line-height: 1.35; margin-top: 4px; }
+  .milestone-text { font-size: var(--fs-small); color: var(--muted); line-height: 1.6; }
+
+  /* ---------- Teams ---------- */
+  .teams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .team {
+    background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md);
+    padding: clamp(24px, 3vw, 32px); display: flex; flex-direction: column; gap: 12px;
+  }
+  .team-name { font-size: 1.375rem; letter-spacing: -0.02em; line-height: 1.25; }
+  .team-text { color: var(--slate); }
+  .team-members { margin-top: 4px; }
+  .members { display: flex; flex-wrap: wrap; gap: 8px; }
+  .member {
+    display: inline-flex; align-items: center; gap: 8px; padding-block: 4px; padding-inline: 4px 14px;
+    background: var(--sand); border-radius: var(--r-pill); font-size: var(--fs-label); font-weight: 500; color: var(--ink);
+  }
+  .avatar {
+    display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--purple-100); color: var(--purple-700); font-size: 0.8125rem; font-weight: 700;
+  }
+  .team-contact { align-self: flex-start; margin-top: auto; }
+  .team-members + .team-contact, .team-text + .team-contact { margin-top: 12px; }
+
+  /* ---------- Partners ---------- */
+  .partners { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .partners > li { display: flex; }
+  .partner {
+    flex: 1; position: relative; display: flex; align-items: center; justify-content: center; text-align: center;
+    min-height: 104px; padding: 20px 28px; border-radius: var(--r-md); background: var(--stone);
+    color: var(--ink); text-decoration: none; transition: background-color .2s, box-shadow .2s;
+  }
+  .partner img { max-height: 56px; width: auto; object-fit: contain; }
+  .partner-name { font-weight: 700; font-size: 1.0625rem; line-height: 1.35; text-wrap: balance; }
+  .partner.is-link:hover { background: var(--lilac); color: var(--purple-700); }
+  .partner :global(.partner-ext) { position: absolute; top: 14px; inset-inline-end: 14px; color: var(--muted); }
+
+  /* ---------- Join CTA ---------- */
+
+  /* ---------- Tablet ---------- */
+  @media (max-width: 1100px) {
+    .activities { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  /* ---------- Vertical timeline below 900px ---------- */
+  @media (max-width: 900px) {
+    .timeline { grid-auto-flow: row; gap: 28px; }
+    .timeline::before {
+      inset-inline: auto; inset-inline-start: calc(var(--dot) / 2 - 1px); top: 8px; bottom: 8px; width: 2px; height: auto;
+      background: repeating-linear-gradient(to bottom, var(--lilac-line) 0 8px, transparent 8px 14px);
+    }
+    .milestone { padding-top: 0; padding-inline-start: calc(var(--dot) + 20px); }
+    .milestone-dot { top: 6px; }
+  }
+
+  /* ---------- Phone ---------- */
+  @media (max-width: 760px) {
+    .banner-art { aspect-ratio: 4 / 3; border-radius: var(--r-md); }
+    .banner-art img { object-position: 40% 60%; }
+    .values, .activities, .teams { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .activity {
+      display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 16px; row-gap: 4px;
+      padding: 20px 20px 8px; align-items: start;
+    }
+    .activity-icon { grid-row: 1 / span 3; width: 48px; height: 48px; border-radius: 16px; margin: 0; }
+    .activity-title { grid-column: 2; align-self: center; min-height: 48px; display: flex; align-items: center; }
+    .activity-text, .activity-more { grid-column: 2; }
+    .activity-more { padding-top: 4px; }
+    .team-contact { align-self: stretch; }
+    .partners { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .partner { min-height: 88px; padding: 18px 16px; }
+    .partner-name { font-size: 0.9375rem; }
+    .partner :global(.partner-ext) { top: 10px; inset-inline-end: 10px; }
+  }
+</style>

@@ -1,0 +1,158 @@
+[
+  {
+    "id": 101, "slug": "hanukkah-ride-2026", "status": "published", "type": "monthly_ride",
+    "start": "2026-12-04T07:30:00", "end": "2026-12-04T09:00:00",
+    "image": { "id": "/images/event-hanukkah.webp", "description": "איור חנוכה: אופניים צהובות עם חנוכייה בסל, סביבונים והכיתוב ׳אנו רוכבים בשבילים׳" },
+    "level": "all", "distance_km": 14, "price": null, "capacity": null, "spots_left": null,
+    "registration_url": "https://chat.whatsapp.com/DgehxNcontJD6ovKF4Yv3l",
+    "facebook_event_url": "https://www.facebook.com/events/",
+    "participants_count": null, "gallery_url": "",
+    "translations": [{
+      "languages_code": "he",
+      "title": "רכיבת חנוכה: סופגניות, דיג׳יי והפתעות בדרך",
+      "summary": "רכיבת הבוקר החודשית שלנו, הפעם בניחוח חנוכה. קצב נינוח, עצירות לצילומים וסופגניות בסיום.",
+      "meeting_point": "רחבת בצלאל החדש, מגרש הרוסים",
+      "route": "בצלאל ← פארק המסילה ← המושבה הגרמנית ← טחנת הרוח",
+      "body": "<p>מתחילים בשמונה פחות רבע בדיוק – תגיעו עשר דקות קודם, עם קסדה ובקבוק מים. הרכיבה מתאימה לכל רמה ויש מלווים בראש ובסוף השיירה.</p><p>בסיום: סופגניות, קפה ומוזיקה ברחבה.</p>"
+    }]
+  },
+  {
+    "id": 102, "slug": "monthly-ride-january-2027", "status": "published", "type": "monthly_ride",
+    "start": "2027-01-01T07:30:00", "end": "2027-01-01T09:00:00",
+    "image": { "id": "/images/gallery-purple-helmet.jpg", "description": "רוכבת עם קסדה סגולה ומאחוריה עשרות רוכבים" },
+    "level": "all", "distance_km": 12, "price": null, "capacity": null, "spots_left": null,
+    "registration_url": "https://chat.whatsapp.com/DgehxNcontJD6ovKF4Yv3l",
+    "facebook_event_url": "https://www.facebook.com/events/",
+    "participants_count": null, "gallery_url": "",
+    "translations": [{
+      "languages_code": "he",
+      "title": "רכיבת ינואר: פותחים שנה על הגלגלים",
+      "summary": "הרכיבה החודשית הראשונה של 2027 – מסלול עירוני קליל עם עצירה לקפה.",
+      "meeting_point": "תחנת הרכבת הראשונה, עמק רפאים",
+      "route": "התחנה הראשונה ← פארק המסילה ← מלחה ← חזרה",
+      "body": "<p>פותחים שנה חדשה ביחד. מסלול שטוח ברובו, מתאים גם לרוכבים חדשים ולמשפחות עם ילדים גדולים.</p>"
+    }]
+  },
+  {
+    "id": 103, "slug": "bike-repair-workshop-december", "status": "published", "type": "workshop",
+    "start": "2026-12-15T18:30:00", "end": "2026-12-15T20:30:00",
+    "image": { "id": "/images/gallery-windmill.jpg", "description": "משפחה עם אופניים ליד טחנת הרוח" },
+    "level": "beginner", "distance_km": null, "price": "40 ₪", "capacity": 16, "spots_left": 5,
+    "registration_url": "https://example.org/register/repair-workshop",
+    "facebook_event_url": "https://www.facebook.com/events/",
+    "participants_count": null, "gallery_url": "",
+    "translations": [{
+      "languages_code": "he",
+      "title": "סדנה: תיקון אופניים בסיסי",
+      "summary": "מתקנים פנצ׳ר, מכוונים בלמים ומשמנים שרשרת – עם הידיים שלכם ועל האופניים שלכם.",
+      "meeting_point": "המרכז הקהילתי בקעה",
+      "route": "",
+      "instructor": "צוות התחזוקה של אב״י",
+      "body": "<p>סדנה מעשית בקבוצה קטנה. הביאו את האופניים שלכם – אנחנו מביאים כלים, פנימיות ותה חם.</p><ul><li>החלפת פנימית ותיקון פנצ׳ר</li><li>כיוון בלמים והילוכים</li><li>ניקוי ושימון שרשרת</li></ul>"
+    }]
+  },
+  {
+    "id": 104, "slug": "volunteers-evening-december", "status": "published", "type": "other",
+    "start": "2026-12-22T19:00:00", "end": "2026-12-22T21:30:00",
+    "image": { "id": "/images/hero-bg.jpg", "description": "אופניים חונים ליד ספסל בשביל ירוק" },
+    "level": null, "distance_km": null, "price": null, "capacity": 60, "spots_left": 22,
+    "registration_url": "https://example.org/register/volunteers",
+    "facebook_event_url": "",
+    "participants_count": null, "gallery_url": "",
+    "translations": [{
+      "languages_code": "he",
+      "title": "ערב מתנדבים: מתכננים את 2027",
+      "summary": "מפגש פתוח לכל מי שרוצה לקחת חלק – צוותים, רעיונות למסלולים ופיצה.",
+      "meeting_point": "מרכז העיר (הכתובת תישלח לנרשמים)",
+      "route": "",
+      "body": "<p>תמיד חלמתם לקחת חלק בארגון? יש שביל שאתם מפנטזים עליו? בואו להכיר את הצוותים ולבחור איפה להשתלב.</p>"
+    }]
+  },
+  {
+    "id": 105, "slug": "annual-ride-2027", "status": "published", "type": "annual_ride",
+    "start": "2027-04-16T07:00:00", "end": "2027-04-16T12:00:00",
+    "image": { "id": "/images/gallery-old-city-wide.jpg", "description": "מאות רוכבים ורוכבות על הדשא מול חומות העיר העתיקה" },
+    "level": "all", "distance_km": 30, "price": "60 ₪ (ילדים חינם)", "capacity": 1500, "spots_left": 1120,
+    "registration_url": "https://example.org/register/annual-2027",
+    "facebook_event_url": "https://www.facebook.com/events/",
+    "participants_count": null, "gallery_url": "",
+    "translations": [{
+      "languages_code": "he",
+      "title": "הרכיבה השנתית 2027",
+      "summary": "אלפי רוכבים, שלושה מסלולים ורחובות סגורים לתנועה – החגיגה הגדולה של השנה.",
+      "meeting_point": "גן הפעמון",
+      "route": "שלושה מסלולים: 8 ק״מ משפחות · 18 ק״מ עירוני · 30 ק״מ מאתגר",
+      "body": "<p>הרכיבה השנתית חוזרת, גדולה מתמיד. בחרו מסלול, הירשמו מראש וקבלו חולצה ומספר רוכב.</p>"
+    }]
+  },
+  {
+    "id": 201, "slug": "november-ride-2026", "status": "published", "type": "monthly_ride",
+    "start": "2026-11-20T07:30:00", "end": "2026-11-20T09:00:00",
+    "image": { "id": "/images/gallery-flags.jpg", "description": "שיירת רוכבים ברחוב עם דגלים" },
+    "level": "all", "distance_km": 13, "price": null, "capacity": null, "spots_left": null,
+    "registration_url": "", "facebook_event_url": "",
+    "participants_count": 340, "gallery_url": "https://www.instagram.com/bicyclesforjerusalem/",
+    "translations": [{
+      "languages_code": "he",
+      "title": "רכיבת נובמבר: דיג׳יי, פיצות, המפלץ ועוד הפתעות",
+      "summary": "340 רוכבים יצאו מבצלאל החדש לבוקר של מוזיקה וגלגלים.",
+      "meeting_point": "בצלאל החדש", "route": "בצלאל ← המפלץ ← עמק המצלבה", "body": ""
+    }]
+  },
+  {
+    "id": 202, "slug": "activists-conference-2026", "status": "published", "type": "other",
+    "start": "2026-11-12T18:00:00", "end": "2026-11-12T21:00:00",
+    "image": { "id": "/images/gallery-families.jpg", "description": "ילדים והורים רוכבים יחד ברחוב סגור לתנועה" },
+    "level": null, "distance_km": null, "price": null, "capacity": null, "spots_left": null,
+    "registration_url": "", "facebook_event_url": "",
+    "participants_count": 85, "gallery_url": "https://www.instagram.com/bicyclesforjerusalem/",
+    "translations": [{
+      "languages_code": "he",
+      "title": "כנס פעילים 2026",
+      "summary": "ערב של רעיונות, צוותים חדשים ותוכנית עבודה לשנה הבאה.",
+      "meeting_point": "מרכז העיר", "route": "", "body": ""
+    }]
+  },
+  {
+    "id": 203, "slug": "october-ride-2026", "status": "published", "type": "monthly_ride",
+    "start": "2026-10-16T07:30:00", "end": "2026-10-16T09:00:00",
+    "image": { "id": "/images/gallery-purple-helmet.jpg", "description": "רוכבת עם קסדה סגולה ומאחוריה עשרות רוכבים" },
+    "level": "all", "distance_km": 11, "price": null, "capacity": null, "spots_left": null,
+    "registration_url": "", "facebook_event_url": "",
+    "participants_count": 260, "gallery_url": "https://www.instagram.com/bicyclesforjerusalem/",
+    "translations": [{
+      "languages_code": "he",
+      "title": "רכיבת אוקטובר: סוכות על אופניים",
+      "summary": "רכיבת חול המועד דרך פארק המסילה עם עצירה בסוכה הקהילתית.",
+      "meeting_point": "התחנה הראשונה", "route": "התחנה הראשונה ← פארק המסילה ← בית צפפה", "body": ""
+    }]
+  },
+  {
+    "id": 204, "slug": "annual-ride-2026", "status": "published", "type": "annual_ride",
+    "start": "2026-04-24T07:00:00", "end": "2026-04-24T12:00:00",
+    "image": { "id": "/images/gallery-old-city-wide.jpg", "description": "מאות רוכבים ורוכבות על הדשא מול חומות העיר העתיקה" },
+    "level": "all", "distance_km": 28, "price": null, "capacity": null, "spots_left": null,
+    "registration_url": "", "facebook_event_url": "",
+    "participants_count": 2100, "gallery_url": "https://www.instagram.com/bicyclesforjerusalem/",
+    "translations": [{
+      "languages_code": "he",
+      "title": "הרכיבה השנתית 2026",
+      "summary": "2,100 רוכבים מול חומות העיר העתיקה – הרכיבה הגדולה בתולדות העמותה.",
+      "meeting_point": "גן הפעמון", "route": "", "body": ""
+    }]
+  },
+  {
+    "id": 205, "slug": "safety-workshop-september-2026", "status": "published", "type": "workshop",
+    "start": "2026-09-08T18:30:00", "end": "2026-09-08T20:00:00",
+    "image": { "id": "/images/hero-bg.jpg", "description": "אופניים חונים ליד ספסל בשביל ירוק" },
+    "level": "beginner", "distance_km": null, "price": null, "capacity": null, "spots_left": null,
+    "registration_url": "", "facebook_event_url": "",
+    "participants_count": 24, "gallery_url": "",
+    "translations": [{
+      "languages_code": "he",
+      "title": "סדנת בטיחות: רכיבה בטוחה בעיר",
+      "summary": "איך רוכבים בכביש, מתי עוברים לשביל ומה עושים בצומת.",
+      "meeting_point": "המרכז הקהילתי בקעה", "route": "", "body": ""
+    }]
+  }
+]

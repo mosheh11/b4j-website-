@@ -1,0 +1,59 @@
+---
+/** "הוספה ליומן" — disclosure menu with Google Calendar and .ics (Apple / Outlook). */
+import Icon from './Icon.astro';
+import type { CmsEvent } from '../lib/cms';
+import { googleCalendarUrl, icsPath } from '../lib/calendar';
+import { UI } from '../lib/labels';
+
+interface Props { event: CmsEvent; variant?: 'primary' | 'soft' | 'outline' | 'white'; size?: 'sm' | 'md' | 'lg' }
+const { event, variant = 'soft', size = 'md' } = Astro.props;
+const site = Astro.site?.href ?? 'https://bikes4jlm.org';
+---
+<details class="atc" data-atc>
+  <summary class:list={['btn', `btn-${variant}`, size !== 'md' && `btn-${size}`]}>
+    <Icon name="calendar" size={18} />{UI.addToCalendar}<Icon name="chevron" size={16} class="chev" />
+  </summary>
+  <ul role="list" class="menu">
+    <li><a href={googleCalendarUrl(event, site)} target="_blank" rel="noopener">Google Calendar</a></li>
+    <li><a href={icsPath(event)} download={`${event.slug}.ics`}>Apple / Outlook (.ics)</a></li>
+  </ul>
+</details>
+
+<script>
+  // Close other open menus & close on outside click / Escape
+  document.addEventListener('click', (e) => {
+    document.querySelectorAll<HTMLDetailsElement>('details[data-atc][open]').forEach((d) => {
+      if (!d.contains(e.target as Node)) d.open = false;
+    });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll<HTMLDetailsElement>('details[data-atc][open]').forEach((d) => { d.open = false; d.querySelector('summary')?.focus(); });
+  });
+</script>
+
+<style>
+  .atc { position: relative; display: inline-block; }
+  summary { list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  :global(.chev) { transition: transform .2s; }
+  .atc[open] :global(.chev) { transform: rotate(180deg); }
+  .menu {
+    position: absolute; z-index: 20; top: calc(100% + 8px); inset-inline-start: 0; min-width: 220px;
+    background: var(--white); border: 1px solid var(--line); border-radius: var(--r-sm);
+    box-shadow: 0 18px 40px rgba(26, 20, 32, 0.14); padding: 6px;
+  }
+  .menu a {
+    display: flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 10px;
+    color: var(--ink); text-decoration: none; font-weight: 500; font-size: var(--fs-small);
+  }
+  .menu a:hover { background: var(--sand); }
+  /* Phones: expand inline under the button (full width) instead of floating,
+     so it can't be covered by the sticky WhatsApp bar or run off-screen. */
+  @media (max-width: 760px) {
+    .atc { display: block; }
+    .atc summary { width: 100%; }
+    .menu { position: static; margin-top: 8px; min-width: 0; box-shadow: none; }
+    .menu a { min-height: 48px; justify-content: center; }
+  }
+</style>

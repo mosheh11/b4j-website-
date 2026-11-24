@@ -1,0 +1,35 @@
+---
+/** Lilac invite banner: title, one line, one CTA → the join page (groups + QR live there). */
+import Icon from './Icon.astro';
+import { withBase } from '../lib/cms';
+
+interface Props { title: string; text?: string }
+const { title, text } = Astro.props;
+---
+<div class="wa-cta">
+  <svg class="rings" viewBox="0 0 400 400" aria-hidden="true">
+    <circle cx="200" cy="200" r="180" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 12" />
+    <circle cx="200" cy="200" r="130" fill="none" stroke="currentColor" stroke-width="2" />
+    <circle cx="200" cy="200" r="80" fill="none" stroke="currentColor" stroke-width="2" />
+  </svg>
+  <div class="copy">
+    <h2 class="title">{title}</h2>
+    {text && <p class="text">{text}</p>}
+  </div>
+  <a href={withBase('/join/#groups')} class="btn btn-primary btn-lg cta">הצטרפו אלינו<Icon name="arrow" size={18} stroke={2.2} /></a>
+</div>
+
+<style>
+  .wa-cta {
+    position: relative; overflow: hidden; isolation: isolate;
+    background: var(--lilac); border-radius: var(--r-xl); padding: clamp(36px, 5vw, 64px) clamp(24px, 4.5vw, 56px);
+    display: flex; flex-wrap: wrap; gap: 28px 48px; align-items: center; justify-content: space-between;
+  }
+  .rings { position: absolute; inset-inline-end: -80px; top: -80px; width: 420px; height: 420px; color: var(--purple); opacity: .18; z-index: -1; }
+  .copy { flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+  .title { font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem); line-height: 1.08; letter-spacing: -0.03em; }
+  .text { font-size: 1.1875rem; line-height: 1.7; color: var(--slate); max-width: 560px; }
+  @media (max-width: 760px) {
+    .cta { width: 100%; }
+  }
+</style>

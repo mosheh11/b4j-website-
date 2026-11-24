@@ -1,0 +1,26 @@
+---
+/** Chips row for an event: date·time, duration, meeting point, level, distance, price, spots. */
+import Icon from './Icon.astro';
+import type { CmsEvent } from '../lib/cms';
+import { EVENT_LEVEL, UI, formatDay, formatDuration, formatTime, sameDay } from '../lib/labels';
+
+interface Props { event: CmsEvent; full?: boolean }
+const { event: e, full = false } = Astro.props;
+const when = sameDay(e.start, e.end)
+  ? `${formatDay(e.start)} · ${formatTime(e.start)}–${formatTime(e.end)}`
+  : `${formatDay(e.start)} ${formatTime(e.start)} – ${formatDay(e.end)} ${formatTime(e.end)}`;
+const duration = formatDuration(e.start, e.end);
+---
+<ul role="list" class="cluster meta" style="--cluster:8px">
+  <li class="chip"><Icon name="calendar" size={16} />{when}</li>
+  {duration && <li class="chip"><Icon name="clock" size={16} />{duration}</li>}
+  {e.meeting_point && <li class="chip"><Icon name="pin" size={16} />{e.meeting_point}</li>}
+  {e.level && e.level !== 'all' && <li class="chip"><Icon name="gauge" size={16} />{EVENT_LEVEL[e.level]}</li>}
+  {full && e.distance_km && <li class="chip"><Icon name="route" size={16} />{e.distance_km} ק״מ</li>}
+  {full && e.price && <li class="chip"><Icon name="ticket" size={16} />{e.price}</li>}
+  {full && e.spots_left != null && <li class="chip spots"><Icon name="users" size={16} />{UI.spotsLeft(e.spots_left)}</li>}
+</ul>
+<style>
+  .spots { background: var(--green-50); color: var(--green-700); }
+  .spots :global(svg) { color: var(--green-700); }
+</style>

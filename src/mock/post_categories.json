@@ -1,0 +1,6 @@
+[
+  { "id": "position_papers", "sort": 1, "translations": [{ "languages_code": "he", "name": "ניירות עמדה" }] },
+  { "id": "event_summaries", "sort": 2, "translations": [{ "languages_code": "he", "name": "סיכומי אירועים" }] },
+  { "id": "tips", "sort": 3, "translations": [{ "languages_code": "he", "name": "טיפים" }] },
+  { "id": "updates", "sort": 4, "translations": [{ "languages_code": "he", "name": "עדכונים" }] }
+]

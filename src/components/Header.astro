@@ -1,0 +1,158 @@
+---
+import Icon from './Icon.astro';
+import { getSiteSettings, assetUrl, withBase } from '../lib/cms';
+import { NAV, SOCIAL, UI } from '../lib/labels';
+
+interface Props { stone?: boolean }
+const { stone = true } = Astro.props;
+const site = await getSiteSettings();
+
+const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+<header class:list={['site-header', { 'on-stone': stone }]} data-header>
+  <div class="container bar">
+    <a href={withBase('/')} class="brand" aria-label={`${site.name} – דף הבית`}>
+      <img src={assetUrl(site.logo)} alt="" width="120" height="126" />
+    </a>
+
+    <nav class="nav" aria-label="ראשי">
+      <ul role="list">
+        {NAV.map((item) => (
+          <li><a href={withBase(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="actions">
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
+        <span class="visually-hidden" data-menu-label>{UI.menu}</span>
+        <Icon name="menu" size={24} class="i-open" />
+        <Icon name="close" size={24} class="i-close" />
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" data-menu hidden>
+    <nav aria-label="ראשי – נייד" class="container">
+      <ul role="list">
+        {NAV.map((item, i) => (
+          <li style={`--i:${i}`}><a href={withBase(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}<Icon name="arrow" size={20} /></a></li>
+        ))}
+      </ul>
+      <div class="mobile-actions">
+        <a href={withBase('/join/')} class="btn btn-primary btn-lg btn-block">{UI.joinActivity}</a>
+        <div class="mobile-social">
+          {site.social_links.map((s) => (
+            <a href={s.url} target="_blank" rel="noopener" aria-label={SOCIAL[s.platform]}><Icon name={s.platform} size={22} /></a>
+          ))}
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')!;
+  const btn = header.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;
+  const menu = header.querySelector<HTMLElement>('[data-menu]')!;
+  const label = header.querySelector<HTMLElement>('[data-menu-label]')!;
+
+  const setOpen = (open: boolean) => {
+    btn.setAttribute('aria-expanded', String(open));
+    label.textContent = open ? 'סגירת התפריט' : 'תפריט';
+    header.classList.toggle('menu-open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add('is-open')); }
+    else { menu.classList.remove('is-open'); setTimeout(() => { if (!header.classList.contains('menu-open')) menu.hidden = true; }, 250); }
+  };
+  btn.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
+  menu.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setOpen(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && header.classList.contains('menu-open')) { setOpen(false); btn.focus(); } });
+  matchMedia('(min-width: 1001px)').addEventListener('change', (m) => { if (m.matches) setOpen(false); });
+
+  // Condense on scroll
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => { header.classList.toggle('is-scrolled', scrollY > 24); ticking = false; });
+  };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+</script>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--white);
+    transition: background-color .3s, box-shadow .3s, backdrop-filter .3s;
+  }
+  .site-header.on-stone { background: var(--stone); }
+  .site-header.is-scrolled {
+    background: color-mix(in srgb, var(--white) 82%, transparent);
+    backdrop-filter: saturate(1.6) blur(16px);
+    -webkit-backdrop-filter: saturate(1.6) blur(16px);
+    box-shadow: 0 1px 0 var(--line), 0 10px 30px rgba(26, 20, 32, 0.06);
+  }
+  .site-header.menu-open { background: var(--white); box-shadow: 0 1px 0 var(--line); }
+
+  .bar {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center; gap: 24px; min-height: var(--header-h); padding-block: 12px;
+  }
+  .brand { justify-self: start; display: flex; }
+  .brand img { height: 92px; width: auto; filter: brightness(0); transition: height .3s var(--ease); }
+  .is-scrolled .brand img { height: 52px; }
+
+  .nav ul { display: flex; gap: 4px 6px; }
+  .nav a {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: var(--r-pill);
+    color: var(--slate); text-decoration: none; font-weight: 500; font-size: 0.9375rem; white-space: nowrap;
+    transition: background-color .2s, color .2s;
+  }
+  .nav a:hover { background: color-mix(in srgb, var(--purple) 8%, transparent); color: var(--ink); }
+  .nav a[aria-current='page'] { color: var(--purple); background: color-mix(in srgb, var(--purple) 10%, transparent); }
+
+  .actions { justify-self: end; display: flex; align-items: center; gap: 8px; }
+
+  .menu-btn {
+    display: none; width: 48px; height: 48px; border-radius: var(--r-pill); border: 1px solid var(--line);
+    background: var(--white); color: var(--ink); align-items: center; justify-content: center; cursor: pointer;
+  }
+  .menu-btn :global(.i-close) { display: none; }
+  .menu-open .menu-btn :global(.i-open) { display: none; }
+  .menu-open .menu-btn :global(.i-close) { display: block; }
+
+  .mobile-menu {
+    position: fixed; inset: var(--header-h) 0 0 0; z-index: 49; overflow-y: auto;
+    background: var(--white); padding: 16px 0 40px;
+    opacity: 0; transform: translateY(-8px); transition: opacity .25s var(--ease), transform .25s var(--ease);
+  }
+  .mobile-menu.is-open { opacity: 1; transform: none; }
+  .mobile-menu ul { display: flex; flex-direction: column; }
+  .mobile-menu li { border-bottom: 1px solid var(--line); }
+  .mobile-menu.is-open li { animation: item-in .4s var(--ease) both; animation-delay: calc(var(--i) * 35ms); }
+  @keyframes item-in { from { opacity: 0; transform: translateY(8px); } }
+  .mobile-menu li a {
+    display: flex; justify-content: space-between; align-items: center; min-height: 64px;
+    font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); text-decoration: none;
+  }
+  .mobile-menu li a :global(svg) { color: var(--muted); }
+  .mobile-menu li a[aria-current='page'] { color: var(--purple); }
+  .mobile-actions { margin-top: 32px; display: flex; flex-direction: column; gap: 24px; }
+  .mobile-social { display: flex; gap: 10px; }
+  .mobile-social a {
+    width: 48px; height: 48px; border-radius: var(--r-pill); border: 1px solid var(--line);
+    display: inline-flex; align-items: center; justify-content: center; color: var(--ink);
+  }
+
+  @media (max-width: 1000px) {
+    :global(:root) { --header-h: 72px; }
+    .bar { grid-template-columns: auto 1fr; min-height: var(--header-h); padding-block: 8px; }
+    .nav { display: none; }
+    .menu-btn { display: inline-flex; }
+    .brand img, .is-scrolled .brand img { height: 52px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu, .mobile-menu.is-open li { transition: none; animation: none; }
+  }
+</style>

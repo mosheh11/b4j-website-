@@ -1,2 +1,15 @@
-bfj/
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# env
+.env
+.env.*
+!.env.example
+
+# misc
 .DS_Store
+bfj/

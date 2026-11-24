@@ -1,0 +1,72 @@
+---
+/**
+ * Event card (homepage "next ride" style): text + chips + actions beside the artwork.
+ * Used for the homepage next ride and every upcoming event on /events/.
+ * Actions: add to calendar (primary) and the Facebook event, when there is one.
+ */
+import Icon from './Icon.astro';
+import EventMeta from './EventMeta.astro';
+import AddToCalendar from './AddToCalendar.astro';
+import type { CmsEvent } from '../lib/cms';
+import { assetUrl, withBase } from '../lib/cms';
+import { EVENT_TYPE, UI } from '../lib/labels';
+
+interface Props {
+  event: CmsEvent;
+  /** Prefix the eyebrow with "האירוע הקרוב". */
+  next?: boolean;
+  /** Show the "לכל האירועים" link (homepage). */
+  allLink?: boolean;
+  headingLevel?: 'h2' | 'h3';
+  elevated?: boolean;
+}
+const { event: e, next = false, allLink = false, headingLevel = 'h3', elevated = false } = Astro.props;
+const H = headingLevel;
+const titleId = `ev-${e.slug}`;
+---
+<article class:list={['ev', { elevated }]} aria-labelledby={titleId}>
+  <div class="ev-body">
+    <div class="ev-top">
+      <span class="eyebrow">{next ? `${UI.nextEvent} · ` : ''}{EVENT_TYPE[e.type]}</span>
+      {allLink && <a href={withBase('/events/')} class="all-events"><Icon name="calendar" size={18} />{UI.allEvents}</a>}
+    </div>
+    <H id={titleId} class="ev-title">{e.title}</H>
+    <EventMeta event={e} />
+    <div class="ev-foot">
+      <AddToCalendar event={e} variant="primary" />
+      {e.facebook_event_url && (
+        <a href={e.facebook_event_url} target="_blank" rel="noopener" class="btn btn-white fb">
+          <Icon name="facebook" size={18} />{UI.facebookEvent}
+        </a>
+      )}
+    </div>
+  </div>
+  {e.image && (
+    <div class="ev-art">
+      <img src={assetUrl(e.image, { width: 900 })} alt={e.image.description ?? ''} width="760" height="520" loading="lazy" />
+    </div>
+  )}
+</article>
+
+<style>
+  .ev { background: var(--white); border: 1px solid var(--line); border-radius: var(--r-lg); display: flex; flex-wrap: wrap; }
+  .ev.elevated { border-color: transparent; box-shadow: var(--shadow-card); }
+  .ev-body { flex: 1 1 520px; min-width: 0; padding: clamp(28px, 4vw, 44px) clamp(22px, 4vw, 48px); display: flex; flex-direction: column; gap: 20px; }
+  .ev-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; }
+  .all-events { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); font-weight: 500; text-decoration: none; }
+  .all-events:hover { color: var(--purple); }
+  .ev-title { font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.375rem); line-height: 1.15; letter-spacing: -0.02em; max-width: 22ch; }
+  .ev-foot { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; margin-top: 8px; }
+  .ev-art {
+    flex: 1 1 380px; min-width: 0; min-height: 300px; background: var(--ink); position: relative; overflow: hidden;
+    border-start-end-radius: var(--r-lg); border-end-end-radius: var(--r-lg);
+  }
+  /* Anchor the crop to the left edge, where event artwork carries the logo. */
+  .ev-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left center; }
+
+  @media (max-width: 760px) {
+    .ev-art { order: -1; min-height: 0; aspect-ratio: 3 / 2; flex-basis: 100%; border-radius: var(--r-lg) var(--r-lg) 0 0; }
+    .ev-foot { flex-direction: column; align-items: stretch; }
+    .ev-foot > :global(*), .ev-foot :global(.btn) { width: 100%; }
+  }
+</style>
