@@ -9,7 +9,7 @@ import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
 import StatsGrid from '../components/StatsGrid.astro';
 import {
-  getPage, getTeams, getMilestones, getPartners, getGroupsSplit, assetUrl, withBase, type CmsImage,
+  getPage, getTeams, getMilestones, getPartners, assetUrl, withBase, type CmsImage,
 } from '../lib/cms';
 import { UI } from '../lib/labels';
 
@@ -23,8 +23,8 @@ interface AboutPage {
   activities?: Array<{ title: string; text?: string }>;
 }
 
-const [page, teams, milestones, partners, { community }] = await Promise.all([
-  getPage<AboutPage>('about'), getTeams(), getMilestones(), getPartners(), getGroupsSplit(),
+const [page, teams, milestones, partners] = await Promise.all([
+  getPage<AboutPage>('about'), getTeams(), getMilestones(), getPartners(),
 ]);
 
 const values = page.values ?? [];
@@ -203,15 +203,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </svg>
       <div class="cta-copy">
         <h2 id="cta-title" class="cta-title">רוצים לרכוב איתנו?</h2>
-        <p class="cta-text">בואו לרכיבה הקרובה, הצטרפו לאחד הצוותים או פשוט היכנסו לקבוצת הקהילה. יש מקום לכולם.</p>
+        <p class="cta-text">בואו לרכיבה הקרובה, הצטרפו לאחד הצוותים או לקבוצות הוואטסאפ שלנו. יש מקום לכולם.</p>
       </div>
       <div class="cta-actions">
         <a href={withBase('/join/')} class="btn btn-white btn-lg">{UI.joinActivity}<Icon name="arrow" size={18} stroke={2.2} /></a>
-        {community && (
-          <a href={community.invite_url} target="_blank" rel="noopener" class="btn btn-whatsapp btn-lg">
-            <Icon name="whatsapp" size={22} />{UI.joinWhatsapp}
-          </a>
-        )}
       </div>
     </div>
   </section>
