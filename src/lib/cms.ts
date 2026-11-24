@@ -138,6 +138,8 @@ export interface SiteSettings {
   contact_form_url?: string;
   calendar_subscribe_url?: string;
   community_group: number;
+  /** X post URLs to show in the social feed (X blocks profile timelines for logged-out visitors). */
+  x_featured_posts?: string[];
   social_links: Array<{ platform: SocialPlatform; url: string; handle?: string }>;
 }
 

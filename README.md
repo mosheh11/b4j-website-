@@ -60,7 +60,7 @@ public/images/        photos, logos, QR
 
 The mock data is realistic placeholder content, not real facts: team members, milestones, event dates/prices/spots, posts, partners, email (`info@example.org`) and newsletter URL. Real data in the mock: all 8 WhatsApp groups (from linktr.ee/BikesForJlm), Facebook/Instagram/X profiles, the donation page and the municipality map.
 
-The social feed (`src/components/SocialFeed.astro`) is outside the contract: it uses the official Facebook Page Plugin, the Instagram profile embed and the X timeline widget (X only renders it for logged-in visitors; others see a follow card). WhatsApp QR codes are generated at build time from each group's invite link (`src/lib/qr.ts`).
+The social feed (`src/components/SocialFeed.astro`) is outside the contract: it uses the official Facebook Page Plugin, the Instagram profile embed and featured X posts (`site_settings.x_featured_posts` — X blocks profile timelines for logged-out visitors, but single-post embeds work for everyone). WhatsApp QR codes are generated at build time from each group's invite link (`src/lib/qr.ts`).
 
 ## Design
 

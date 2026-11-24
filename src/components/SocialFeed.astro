@@ -17,6 +17,7 @@ const site = await getSiteSettings();
 const link = (p: string) => site.social_links.find((s) => s.platform === p);
 const fb = link('facebook'), ig = link('instagram'), x = link('x');
 
+const xPosts = (site.x_featured_posts ?? []).map((u) => u.replace('://x.com/', '://twitter.com/')).slice(0, 3);
 const igUser = ig?.url.match(/instagram\.com\/([^/?#]+)/)?.[1];
 const xUser = x?.url.match(/(?:x|twitter)\.com\/([^/?#]+)/)?.[1];
 const fbSrc = fb && `https://www.facebook.com/plugins/page.php?${new URLSearchParams({
@@ -45,14 +46,17 @@ const fbSrc = fb && `https://www.facebook.com/plugins/page.php?${new URLSearchPa
     <article class="card net-card">
       <header><span class="net"><Icon name="x" size={18} />X</span><a href={x.url} target="_blank" rel="noopener" class="link-arrow" dir="auto">@{xUser}</a></header>
       <div class="embed embed-x" data-x-embed>
-        <a class="twitter-timeline" data-lang="he" data-chrome="noheader nofooter transparent" data-dnt="true" href={`https://twitter.com/${xUser}`}>
+        {xPosts.map((u) => (
+          <blockquote class="twitter-tweet" data-lang="he" data-dnt="true" data-conversation="none"><a href={u}>פוסט של @{xUser} ב־X</a></blockquote>
+        ))}
+        {xPosts.length === 0 && <a class="twitter-timeline" data-lang="he" data-chrome="noheader nofooter transparent" data-dnt="true" href={`https://twitter.com/${xUser}`}>
           <span class="x-follow">
             <span class="x-logo"><Icon name="x" size={34} stroke={2.2} /></span>
             <b dir="ltr">@{xUser}</b>
             <span class="x-text">עדכונים, עמדות ותגובות בזמן אמת</span>
             <span class="btn btn-outline btn-sm">עקבו ב־X</span>
           </span>
-        </a>
+        </a>}
       </div>
     </article>
   )}
@@ -100,7 +104,9 @@ const fbSrc = fb && `https://www.facebook.com/plugins/page.php?${new URLSearchPa
   /* Same height in every card: Instagram's profile embed is ~header + two rows of square tiles. */
   .embed { height: clamp(360px, calc(150px + 66.6cqw), 520px); border-radius: var(--r-sm); overflow: hidden; background: var(--sand); }
   .embed iframe { width: 100%; height: 100%; border: 0; display: block; background: var(--white); }
-  .embed-x { overflow-y: auto; background: var(--white); }
+  .embed-x { overflow-y: auto; background: var(--white); padding: 0 6px; overscroll-behavior: contain; }
+  .embed-x :global(.twitter-tweet) { margin: 8px auto !important; }
+  .embed-x blockquote.twitter-tweet { margin: 12px; padding: 16px; border: 1px solid var(--line); border-radius: var(--r-sm); font-size: var(--fs-small); }
   .embed-x > a { display: flex; align-items: center; justify-content: center; height: 100%; text-decoration: none; color: var(--ink); }
   /* Shown until (or instead of, when X blocks logged-out timelines) the live widget. */
   .x-follow { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 24px; }

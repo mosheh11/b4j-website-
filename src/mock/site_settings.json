@@ -8,6 +8,10 @@
   "contact_form_url": "mailto:info@example.org",
   "calendar_subscribe_url": "",
   "community_group": 1,
+  "x_featured_posts": [
+    "https://x.com/Bikes4JLM/status/2023784953247404337",
+    "https://x.com/Bikes4JLM/status/2004850870736093599"
+  ],
   "social_links": [
     { "platform": "instagram", "url": "https://www.instagram.com/bicyclesforjerusalem", "handle": "@bicyclesforjerusalem" },
     { "platform": "facebook", "url": "https://www.facebook.com/cyclejerusalem", "handle": "cyclejerusalem" },
